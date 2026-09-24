@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Secretos / configuración local
+.env
+.env.local
+
+# Salidas de los scripts (CSV/JSON de corridas)
+salidas/
+
+# IDE
+.vscode/
+.idea/
