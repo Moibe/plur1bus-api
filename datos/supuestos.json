@@ -68,19 +68,20 @@
    ]
   },
   "kcal_dia_promedio": {
-   "valor": 2050,
-   "bajo": 1815,
+   "valor": 1850,
+   "bajo": 1600,
    "alto": 2450,
    "unidad": "kcal/dia",
-   "descripcion": "Requerimiento energético promedio de una colmena sedentaria (PAL 1.55). Activa sería ~2,379 (ADER de la FAO); John Cena necesita 2,400.",
+   "descripcion": "Requerimiento energético promedio de la colmena con actividad baja (PAL 1.4): ahorra energía, duerme junta y apaga luces, pero mantiene la infraestructura. Sedentaria típica (PAL 1.55) serían ~2,070; activa, ~2,379 (ADER de la FAO).",
    "fuentes": [
+    "pal_colmena",
     "kcal_requerimiento_sedentario_poblacional",
-    "kcal_requerimiento_promedio",
-    "canon_kcal_dia_cena"
-   ]
+    "kcal_requerimiento_promedio"
+   ],
+   "derivacion": "~2,070 × 1.4 / 1.55 ≈ 1,850."
   },
   "ratio_req_ninos": {
-   "valor": 0.701,
+   "valor": 0.725,
    "bajo": 0.62,
    "alto": 0.78,
    "unidad": "fraccion",
@@ -89,10 +90,10 @@
     "kcal_nino_0_4",
     "kcal_nino_5_14"
    ],
-   "derivacion": "Promedio ponderado de 0-4 (1,000) y 5-14 (1,650) = 1,442 kcal, entre el promedio poblacional de 2,057."
+   "derivacion": "Promedio ponderado de 0-4 (1,000) y 5-14 (1,740) = 1,503 kcal, entre el promedio poblacional de 2,072."
   },
   "ratio_req_adultos": {
-   "valor": 1.128,
+   "valor": 1.12,
    "bajo": 1.05,
    "alto": 1.2,
    "unidad": "fraccion",
@@ -100,10 +101,10 @@
    "fuentes": [
     "kcal_sedentario_adulto"
    ],
-   "derivacion": "2,320 / 2,057."
+   "derivacion": "2,320 / 2,072."
   },
   "ratio_req_mayores": {
-   "valor": 0.899,
+   "valor": 0.893,
    "bajo": 0.8,
    "alto": 1.0,
    "unidad": "fraccion",
@@ -111,11 +112,11 @@
    "fuentes": [
     "kcal_adulto_mayor_65"
    ],
-   "derivacion": "1,850 / 2,057."
+   "derivacion": "1,850 / 2,072."
   },
   "reserva_mediana_adultos": {
-   "valor": 112000,
-   "bajo": 70000,
+   "valor": 125000,
+   "bajo": 80000,
    "alto": 160000,
    "unidad": "kcal",
    "descripcion": "Reserva corporal movilizable mediana de un adulto antes de morir de inanición (grasa utilizable más la mitad de la proteína).",
@@ -124,10 +125,10 @@
     "grasa_movilizable_kg",
     "kcal_por_kg_grasa"
    ],
-   "derivacion": "Promedio de 130,000 kcal; con dispersión lognormal de sigma 0.6 la mediana es 130,000 / e^(0.6²/2) ≈ 112,000."
+   "derivacion": "Promedio de ~150,000 kcal (la verificación da 131-160 mil al recalcular la grasa en 13-15 kg); con sigma 0.6 la mediana es 150,000 / e^(0.6²/2) ≈ 125,000."
   },
   "reserva_mediana_ninos": {
-   "valor": 30000,
+   "valor": 33000,
    "bajo": 15000,
    "alto": 45000,
    "unidad": "kcal",
@@ -138,7 +139,7 @@
    "derivacion": "Supuesto: 5-14 años, ~25 kg con 4-5 kg de grasa utilizable; 0-4 años, ~12 kg."
   },
   "reserva_mediana_mayores": {
-   "valor": 95000,
+   "valor": 105000,
    "bajo": 60000,
    "alto": 130000,
    "unidad": "kcal",
@@ -162,7 +163,7 @@
    "derivacion": "Con sigma 0.6, el percentil 5 queda en ~42 mil kcal (bajo peso) y el 95 en ~300 mil (obesidad)."
   },
   "adaptacion_metabolica": {
-   "valor": 0.65,
+   "valor": 0.7,
    "bajo": 0.3,
    "alto": 0.8,
    "unidad": "fraccion",
@@ -172,7 +173,7 @@
     "dias_supervivencia_ayuno_total",
     "frac_peso_final_semiinanicion_24sem"
    ],
-   "derivacion": "Calibrado para reproducir 62 días de ayuno total (huelguistas de 1981, reserva de ~90 mil kcal) y 24 semanas sin muertes con ~45% de la ración (Minnesota)."
+   "derivacion": "Calibrado junto con la reserva y el riesgo de desnutrición: el ayuno total de un huelguista delgado (~90 mil kcal) dura ~67 días (observado: 46-73, promedio 62); con ~84% de la ración a 24 semanas muere ~0.4% (Minnesota: 0 en hombres sanos); con 30% muere ~38% en 24 semanas (Leningrado, con peor ración oficial pero suplementos informales: ~25-30%)."
   },
   "recuperacion_diaria": {
    "valor": 0.2,
@@ -188,25 +189,30 @@
    "bajo": 0.2,
    "alto": 0.5,
    "unidad": "fraccion",
-   "descripcion": "Reserva (fracción de la inicial) por debajo de la cual empieza el riesgo de morir por desnutrición, más o menos la delgadez severa (IMC < 16).",
+   "descripcion": "Reserva, relativa a la de una persona típica de su edad, por debajo de la cual empieza el riesgo de morir por desnutrición: más o menos la delgadez severa (IMC < 16). Por eso los que ya eran delgados mueren primero.",
    "fuentes": [
     "imc_desnutricion_severa",
     "imc_letal",
-    "frac_perdida_peso_letal"
+    "frac_perdida_peso_letal",
+    "adultos_bajo_peso_2022"
    ],
-   "derivacion": "Con 30% de la reserva, un adulto ya perdió ~28% de su peso: cerca del IMC 16 de la OMS."
+   "derivacion": "30% de la reserva mediana de un adulto (~34 mil kcal) equivale a haber perdido ~28% del peso: cerca del IMC 16 de la OMS."
   },
   "riesgo_desnutricion_max": {
-   "valor": 0.01,
-   "bajo": 0.003,
-   "alto": 0.03,
+   "valor": 0.02,
+   "bajo": 0.005,
+   "alto": 0.04,
    "unidad": "fraccion/dia",
    "descripcion": "Riesgo diario de morir cuando la reserva se acerca a cero (infecciones, falla orgánica). Crece con el cuadrado de lo que falta por debajo del umbral.",
    "fuentes": [
     "sitio_leningrado",
-    "minnesota_semiinanicion"
+    "leningrado_muertes_mes_pico",
+    "minnesota_semiinanicion",
+    "racion_minnesota_sin_muertes_kcal",
+    "mortalidad_12m_racion_1360_1870",
+    "cmr_poblacion_desnutricion_alta"
    ],
-   "derivacion": "Supuesto calibrado: con 1% al día, una población con 15% de la ración (Leningrado) muere en masa en 2-3 meses, y con ~45% (Minnesota) la mortalidad a 24 semanas queda en pocos por ciento."
+   "derivacion": "Punto medio entre anclas que tiran en sentidos opuestos: con ~76% de la ración el modelo da ~2.4% de muertes en 12 meses (refugiados etíopes con 1,360-1,870 kcal: ~9%, pero con epidemias, que el modelo no tiene), y con raciones extremas es algo más letal que Leningrado, donde la gente comía más que la ración oficial de pan."
   },
   "frac_muertes_ninos": {
    "valor": 0.097,
@@ -354,17 +360,18 @@
    ]
   },
   "soya_mt": {
-   "valor": 300,
-   "bajo": 125,
+   "valor": 255,
+   "bajo": 150,
    "alto": 450,
    "unidad": "Mt",
    "descripcion": "Soya almacenada en una fecha promedio del año (las existencias de cierre, 125 Mt, son el mínimo del ciclo).",
    "fuentes": [
     "soya_existencias_mt",
     "soya_existencias_promedio_anual_mt",
-    "soya_produccion_mt"
+    "soya_produccion_mt",
+    "stock_soya_eeuu_1sep2025_mt"
    ],
-   "derivacion": "125 + 0.85 × 429 / 2 ≈ 307 Mt, redondeado a 300."
+   "derivacion": "Cierre + ~0.3 × producción (125 + 0.3 × 429 ≈ 255 Mt), validado con las existencias trimestrales de EE. UU."
   },
   "oleaginosas_otras_mt": {
    "valor": 70,
@@ -551,11 +558,11 @@
    ]
   },
   "kcal_kg_congelados": {
-   "valor": 2100,
-   "bajo": 1800,
-   "alto": 2400,
+   "valor": 1930,
+   "bajo": 1750,
+   "alto": 2150,
    "unidad": "kcal/kg",
-   "descripcion": "Energía promedio de lo congelado.",
+   "descripcion": "Energía promedio de lo congelado (carne, aves, queso, mantequilla, verdura y papa congeladas).",
    "fuentes": [
     "almacen_frio_eeuu_kcal_kg"
    ]
@@ -605,43 +612,47 @@
    "derivacion": "Canon: procesan primero lo que se va a echar a perder y lo convierten en bebida estable."
   },
   "perros": {
-   "valor": 987000000.0,
-   "bajo": 700000000.0,
-   "alto": 1000000000.0,
+   "valor": 200000000.0,
+   "bajo": 175000000.0,
+   "alto": 225000000.0,
    "unidad": "cabezas",
-   "descripcion": "Perros en el mundo; más del 70% son de vida libre.",
+   "descripcion": "Perros con dueño, los que alguien alimentaba (hay de 700 a 1,000 M de perros en total; más del 70% son de vida libre).",
    "fuentes": [
+    "frac_perros_con_dueno",
     "perros_mundo",
     "frac_perros_libres"
    ]
   },
   "gatos": {
-   "valor": 600000000.0,
-   "bajo": 480000000.0,
-   "alto": 1000000000.0,
+   "valor": 220000000.0,
+   "bajo": 200000000.0,
+   "alto": 370000000.0,
    "unidad": "cabezas",
-   "descripcion": "Gatos en el mundo.",
+   "descripcion": "Gatos con dueño.",
    "fuentes": [
+    "gatos_con_dueno_mundo",
     "gatos_mundo"
    ]
   },
   "kcal_dia_perro": {
-   "valor": 1125,
-   "bajo": 630,
-   "alto": 1410,
+   "valor": 854,
+   "bajo": 533,
+   "alto": 1409,
    "unidad": "kcal/dia",
-   "descripcion": "Requerimiento de un perro de 21.6 kg.",
+   "descripcion": "Requerimiento de un perro con dueño (~15 kg).",
    "fuentes": [
+    "kcal_dia_perro_con_dueno",
     "kcal_dia_perro"
    ]
   },
   "kcal_dia_gato": {
-   "valor": 226,
-   "bajo": 190,
-   "alto": 300,
+   "valor": 238,
+   "bajo": 191,
+   "alto": 277,
    "unidad": "kcal/dia",
-   "descripcion": "Requerimiento de un gato.",
+   "descripcion": "Requerimiento de un gato con dueño.",
    "fuentes": [
+    "kcal_dia_gato_con_dueno",
     "kcal_dia_gato"
    ]
   },
@@ -832,7 +843,7 @@
   "bovinos": {
    "nombre": "Bovinos",
    "cabezas": 1574000000.0,
-   "kcal_comestible_cabeza": 245000,
+   "kcal_comestible_cabeza": 222600,
    "vida_natural_dias": 6205,
    "mortalidad_liberado_anual": 0.35,
    "alimento_kcal_dia": 1490,
@@ -842,13 +853,15 @@
     "peso_vivo_bovino_kg",
     "kcal_kg_peso_vivo_bovino",
     "vida_natural_bovino_anios",
-    "frac_rumiantes_sobreviven_pastoreo"
+    "frac_rumiantes_sobreviven_pastoreo",
+    "concentrado_kg_cabeza_dia_vaca_lechera_mundial",
+    "pienso_compuesto_mt_anio_bovinos_carne"
    ]
   },
   "bufalos": {
    "nombre": "Búfalos",
    "cabezas": 212000000.0,
-   "kcal_comestible_cabeza": 293125,
+   "kcal_comestible_cabeza": 266325,
    "vida_natural_dias": 7300,
    "mortalidad_liberado_anual": 0.3,
    "alimento_kcal_dia": 500,
@@ -870,7 +883,8 @@
     "cerdos_cabezas",
     "peso_vivo_cerdo_kg",
     "vida_natural_cerdo_anios",
-    "mortalidad_anual_cerda"
+    "mortalidad_anual_cerda",
+    "pienso_kg_cabeza_dia_cerdo_promedio_hato"
    ]
   },
   "ovinos_caprinos": {
@@ -894,12 +908,13 @@
    "kcal_comestible_cabeza": 1561.5,
    "vida_natural_dias": 120,
    "mortalidad_liberado_anual": 20.0,
-   "alimento_kcal_dia": 300,
+   "alimento_kcal_dia": 500,
    "frac_pastoreo": 0.0,
    "fuentes": [
     "pollos_engorda_cabezas",
     "vida_natural_pollo_engorda_dias",
-    "broilers_no_sobreviven_libre_acceso"
+    "broilers_no_sobreviven_libre_acceso",
+    "pienso_g_cabeza_dia_broiler_no_sacrificado"
    ]
   },
   "gallinas_ponedoras": {
@@ -908,11 +923,12 @@
    "kcal_comestible_cabeza": 1873.8,
    "vida_natural_dias": 2555,
    "mortalidad_liberado_anual": 2.0,
-   "alimento_kcal_dia": 280,
+   "alimento_kcal_dia": 339,
    "frac_pastoreo": 0.0,
    "fuentes": [
     "gallinas_ponedoras_cabezas",
-    "vida_natural_gallina_anios"
+    "vida_natural_gallina_anios",
+    "pienso_g_cabeza_dia_ponedora"
    ]
   },
   "otras_aves": {

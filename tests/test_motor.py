@@ -96,16 +96,18 @@ def test_api_simular_y_escenario():
 
 
 def test_racion_fija_con_comida_de_sobra_se_estabiliza():
-    # Con 70% del requerimiento base el cuerpo adelgaza hasta gastar lo que come:
-    # nadie debería morir de hambre si la comida nunca se acaba.
+    # Con 70% del requerimiento base el cuerpo adelgaza hasta gastar lo que come.
+    # Mueren algunos de los que ya eran delgados, pero la población se estabiliza.
     r = _r(racion_modo="fija", racion_fraccion=0.7, cereal_en_mano_mt=5000, siembra_senescente=1, cosecha_senescente=1, anios=4)
-    assert r.resumen["muertes_hambre"] < 1e6
+    assert r.resumen["muertes_hambre"] < 0.15 * r.resumen["poblacion_inicial"]
+    assert sum(r.serie["muertes_hambre"][-52:]) < 0.5 * sum(r.serie["muertes_hambre"][:52])
     assert min(r.serie["reserva_corporal"][-10:]) > 0.3
 
 
-def test_estirar_retrasa_la_hambruna():
-    completa = _r(racion_modo="completa").resumen["dia_inicio_hambruna"]
-    estirar = _r(racion_modo="estirar", horizonte_estirar_anios=10).resumen["dia_inicio_hambruna"]
+def test_estirar_retrasa_el_colapso():
+    # Estirar mata antes a los más vulnerables, pero la mitad de la colmena aguanta más.
+    completa = _r(racion_modo="completa").resumen["dia_mitad_poblacion"]
+    estirar = _r(racion_modo="estirar", horizonte_estirar_anios=10).resumen["dia_mitad_poblacion"]
     assert estirar > completa
 
 
@@ -148,7 +150,8 @@ def test_desnutricion_cronica_mata_con_raciones_muy_bajas():
     muy_baja = _r(racion_modo="fija", racion_fraccion=0.36, anios=4, **ABUNDANCIA).resumen
     suficiente = _r(racion_modo="fija", racion_fraccion=0.8, anios=4, **ABUNDANCIA).resumen
     assert muy_baja["muertes_hambre"] > 0.3 * muy_baja["poblacion_inicial"]
-    assert suficiente["muertes_hambre"] < 0.01 * suficiente["poblacion_inicial"]
+    # con 80% solo caen los que ya eran delgados (refugiados con 1,360-1,870 kcal: ~9% en 12 meses)
+    assert suficiente["muertes_hambre"] < 0.1 * suficiente["poblacion_inicial"]
 
 
 def test_estirar_no_se_come_la_cosecha_pasajera_como_si_durara():

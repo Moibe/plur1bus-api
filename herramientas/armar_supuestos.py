@@ -22,9 +22,9 @@ def v(valor, bajo, alto, unidad, descripcion, fuentes=(), derivacion=""):
 
 
 # Requerimientos por cohorte (FAO/WHO/UNU 2004, sedentario PAL 1.55):
-# 0-4: 1,000 · 5-14: 1,650 · 15-64: 2,320 · 65+: 1,850 kcal/día.
+# 0-4: 1,000 · 5-14: 1,740 · 15-64: 2,320 · 65+: 1,850 kcal/día.
 F04, F514, F65 = 0.0782, 0.1658, 0.104
-REQ_NINOS = (F04 * 1000 + F514 * 1650) / (F04 + F514)
+REQ_NINOS = (F04 * 1000 + F514 * 1740) / (F04 + F514)
 PROMEDIO = (F04 + F514) * REQ_NINOS + (1 - F04 - F514 - F65) * 2320 + F65 * 1850
 
 VALORES = {
@@ -36,19 +36,19 @@ VALORES = {
     # --- Población y demanda ---
     "frac_ninos": v(round(F04 + F514, 4), 0.241, 0.247, "fraccion", "Fracción de la población de 0 a 14 años (ONU, WPP 2024, año 2025).", ["frac_0_4", "frac_5_14"]),
     "frac_mayores": v(F65, 0.101, 0.106, "fraccion", "Fracción de la población de 65 años o más (ONU, WPP 2024, año 2025).", ["frac_65_mas"]),
-    "kcal_dia_promedio": v(2050, 1815, 2450, "kcal/dia", "Requerimiento energético promedio de una colmena sedentaria (PAL 1.55). Activa sería ~2,379 (ADER de la FAO); John Cena necesita 2,400.", ["kcal_requerimiento_sedentario_poblacional", "kcal_requerimiento_promedio", "canon_kcal_dia_cena"]),
-    "ratio_req_ninos": v(round(REQ_NINOS / PROMEDIO, 3), 0.62, 0.78, "fraccion", "Requerimiento de un niño (0-14) relativo al promedio.", ["kcal_nino_0_4", "kcal_nino_5_14"], f"Promedio ponderado de 0-4 (1,000) y 5-14 (1,650) = {REQ_NINOS:,.0f} kcal, entre el promedio poblacional de {PROMEDIO:,.0f}."),
+    "kcal_dia_promedio": v(1850, 1600, 2450, "kcal/dia", "Requerimiento energético promedio de la colmena con actividad baja (PAL 1.4): ahorra energía, duerme junta y apaga luces, pero mantiene la infraestructura. Sedentaria típica (PAL 1.55) serían ~2,070; activa, ~2,379 (ADER de la FAO).", ["pal_colmena", "kcal_requerimiento_sedentario_poblacional", "kcal_requerimiento_promedio"], "~2,070 × 1.4 / 1.55 ≈ 1,850."),
+    "ratio_req_ninos": v(round(REQ_NINOS / PROMEDIO, 3), 0.62, 0.78, "fraccion", "Requerimiento de un niño (0-14) relativo al promedio.", ["kcal_nino_0_4", "kcal_nino_5_14"], f"Promedio ponderado de 0-4 (1,000) y 5-14 (1,740) = {REQ_NINOS:,.0f} kcal, entre el promedio poblacional de {PROMEDIO:,.0f}."),
     "ratio_req_adultos": v(round(2320 / PROMEDIO, 3), 1.05, 1.2, "fraccion", "Requerimiento de un adulto (15-64) relativo al promedio.", ["kcal_sedentario_adulto"], f"2,320 / {PROMEDIO:,.0f}."),
     "ratio_req_mayores": v(round(1850 / PROMEDIO, 3), 0.8, 1.0, "fraccion", "Requerimiento de un mayor (65+) relativo al promedio.", ["kcal_adulto_mayor_65"], f"1,850 / {PROMEDIO:,.0f}."),
     # --- Fisiología de la inanición ---
-    "reserva_mediana_adultos": v(112000, 70000, 160000, "kcal", "Reserva corporal movilizable mediana de un adulto antes de morir de inanición (grasa utilizable más la mitad de la proteína).", ["reserva_energetica_movilizable_kcal", "grasa_movilizable_kg", "kcal_por_kg_grasa"], "Promedio de 130,000 kcal; con dispersión lognormal de sigma 0.6 la mediana es 130,000 / e^(0.6²/2) ≈ 112,000."),
-    "reserva_mediana_ninos": v(30000, 15000, 45000, "kcal", "Reserva mediana de un niño (0-14): de ~15 mil kcal en menores de 5 a ~35 mil en escolares.", ["masa_promedio_poblacion_kg"], "Supuesto: 5-14 años, ~25 kg con 4-5 kg de grasa utilizable; 0-4 años, ~12 kg."),
-    "reserva_mediana_mayores": v(95000, 60000, 130000, "kcal", "Reserva mediana de un mayor (65+): más grasa, pero menos tolerancia.", ["frac_grasa_corporal_adulto", "masa_fallecido_adulto_mayor_kg"]),
+    "reserva_mediana_adultos": v(125000, 80000, 160000, "kcal", "Reserva corporal movilizable mediana de un adulto antes de morir de inanición (grasa utilizable más la mitad de la proteína).", ["reserva_energetica_movilizable_kcal", "grasa_movilizable_kg", "kcal_por_kg_grasa"], "Promedio de ~150,000 kcal (la verificación da 131-160 mil al recalcular la grasa en 13-15 kg); con sigma 0.6 la mediana es 150,000 / e^(0.6²/2) ≈ 125,000."),
+    "reserva_mediana_ninos": v(33000, 15000, 45000, "kcal", "Reserva mediana de un niño (0-14): de ~15 mil kcal en menores de 5 a ~35 mil en escolares.", ["masa_promedio_poblacion_kg"], "Supuesto: 5-14 años, ~25 kg con 4-5 kg de grasa utilizable; 0-4 años, ~12 kg."),
+    "reserva_mediana_mayores": v(105000, 60000, 130000, "kcal", "Reserva mediana de un mayor (65+): más grasa, pero menos tolerancia.", ["frac_grasa_corporal_adulto", "masa_fallecido_adulto_mayor_kg"]),
     "reserva_sigma": v(0.6, 0.4, 0.8, "adimensional", "Dispersión (sigma lognormal) de las reservas, del bajo peso (390 M de adultos) a la obesidad (890 M).", ["adultos_bajo_peso", "adultos_sobrepeso", "adultos_obesidad"], "Con sigma 0.6, el percentil 5 queda en ~42 mil kcal (bajo peso) y el 95 en ~300 mil (obesidad)."),
-    "adaptacion_metabolica": v(0.65, 0.3, 0.8, "fraccion", "Caída máxima del gasto energético al agotarse la reserva (menos masa más termogénesis adaptativa).", ["reduccion_gasto_inanicion", "dias_supervivencia_ayuno_total", "frac_peso_final_semiinanicion_24sem"], "Calibrado para reproducir 62 días de ayuno total (huelguistas de 1981, reserva de ~90 mil kcal) y 24 semanas sin muertes con ~45% de la ración (Minnesota)."),
+    "adaptacion_metabolica": v(0.7, 0.3, 0.8, "fraccion", "Caída máxima del gasto energético al agotarse la reserva (menos masa más termogénesis adaptativa).", ["reduccion_gasto_inanicion", "dias_supervivencia_ayuno_total", "frac_peso_final_semiinanicion_24sem"], "Calibrado junto con la reserva y el riesgo de desnutrición: el ayuno total de un huelguista delgado (~90 mil kcal) dura ~67 días (observado: 46-73, promedio 62); con ~84% de la ración a 24 semanas muere ~0.4% (Minnesota: 0 en hombres sanos); con 30% muere ~38% en 24 semanas (Leningrado, con peor ración oficial pero suplementos informales: ~25-30%)."),
     "recuperacion_diaria": v(0.2, 0.0, 0.3, "fraccion", "Extra que una persona desnutrida puede comer al día para recuperar reserva, como fracción de su requerimiento.", [], "Supuesto del modelo."),
-    "umbral_desnutricion": v(0.3, 0.2, 0.5, "fraccion", "Reserva (fracción de la inicial) por debajo de la cual empieza el riesgo de morir por desnutrición, más o menos la delgadez severa (IMC < 16).", ["imc_desnutricion_severa", "imc_letal", "frac_perdida_peso_letal"], "Con 30% de la reserva, un adulto ya perdió ~28% de su peso: cerca del IMC 16 de la OMS."),
-    "riesgo_desnutricion_max": v(0.01, 0.003, 0.03, "fraccion/dia", "Riesgo diario de morir cuando la reserva se acerca a cero (infecciones, falla orgánica). Crece con el cuadrado de lo que falta por debajo del umbral.", ["sitio_leningrado", "minnesota_semiinanicion"], "Supuesto calibrado: con 1% al día, una población con 15% de la ración (Leningrado) muere en masa en 2-3 meses, y con ~45% (Minnesota) la mortalidad a 24 semanas queda en pocos por ciento."),
+    "umbral_desnutricion": v(0.3, 0.2, 0.5, "fraccion", "Reserva, relativa a la de una persona típica de su edad, por debajo de la cual empieza el riesgo de morir por desnutrición: más o menos la delgadez severa (IMC < 16). Por eso los que ya eran delgados mueren primero.", ["imc_desnutricion_severa", "imc_letal", "frac_perdida_peso_letal", "adultos_bajo_peso_2022"], "30% de la reserva mediana de un adulto (~34 mil kcal) equivale a haber perdido ~28% del peso: cerca del IMC 16 de la OMS."),
+    "riesgo_desnutricion_max": v(0.02, 0.005, 0.04, "fraccion/dia", "Riesgo diario de morir cuando la reserva se acerca a cero (infecciones, falla orgánica). Crece con el cuadrado de lo que falta por debajo del umbral.", ["sitio_leningrado", "leningrado_muertes_mes_pico", "minnesota_semiinanicion", "racion_minnesota_sin_muertes_kcal", "mortalidad_12m_racion_1360_1870", "cmr_poblacion_desnutricion_alta"], "Punto medio entre anclas que tiran en sentidos opuestos: con ~76% de la ración el modelo da ~2.4% de muertes en 12 meses (refugiados etíopes con 1,360-1,870 kcal: ~9%, pero con epidemias, que el modelo no tiene), y con raciones extremas es algo más letal que Leningrado, donde la gente comía más que la ración oficial de pan."),
     "frac_muertes_ninos": v(0.097, 0.09, 0.105, "fraccion", "Fracción de las muertes naturales que son niños (0-14).", ["frac_muertes_0_4"], "0-4: 7.8% más 5-14: 1.9% (WPP 2024, año 2023)."),
     "frac_muertes_mayores": v(0.598, 0.58, 0.62, "fraccion", "Fracción de las muertes naturales que son mayores (65+).", ["frac_muertes_65_mas"]),
     # --- Cuerpos y HDP ---
@@ -65,7 +65,7 @@ VALORES = {
     "perdida_cereal_anual": v(0.045, 0.01, 0.18, "fraccion/anio", "Pérdida anual del grano almacenado. En silos herméticos es menor al 1%; con pequeños productores en el trópico, de 18 a 36%.", ["perdida_almacen_anual", "perdida_almacen_anual_buena", "perdida_almacen_anual_pequeno_productor"]),
     "cereal_produccion_mt": v(3019, 2980, 3043, "Mt/anio", "Producción mundial de cereal 2025 (USDA PSD; FAO: 3,043 Mt). Solo cuenta si se permite recoger grano de plantas muertas.", ["cereal_produccion_2025_mt"]),
     # --- Otros inventarios ---
-    "soya_mt": v(300, 125, 450, "Mt", "Soya almacenada en una fecha promedio del año (las existencias de cierre, 125 Mt, son el mínimo del ciclo).", ["soya_existencias_mt", "soya_existencias_promedio_anual_mt", "soya_produccion_mt"], "125 + 0.85 × 429 / 2 ≈ 307 Mt, redondeado a 300."),
+    "soya_mt": v(255, 150, 450, "Mt", "Soya almacenada en una fecha promedio del año (las existencias de cierre, 125 Mt, son el mínimo del ciclo).", ["soya_existencias_mt", "soya_existencias_promedio_anual_mt", "soya_produccion_mt", "stock_soya_eeuu_1sep2025_mt"], "Cierre + ~0.3 × producción (125 + 0.3 × 429 ≈ 255 Mt), validado con las existencias trimestrales de EE. UU."),
     "oleaginosas_otras_mt": v(70, 20, 120, "Mt", "Colza, girasol, cacahuate y otras oleaginosas almacenadas en una fecha promedio.", ["oleaginosas_otras_existencias_mt", "colza_existencias_mt", "girasol_existencias_mt", "cacahuate_existencias_mt"], "Cierre de 20.6 Mt más la parte de las cosechas del año que aún no se consume."),
     "harina_proteica_mt": v(24, 22.5, 24.7, "Mt", "Harinas proteicas almacenadas (sobre todo pasta de soya).", ["harina_proteica_existencias_mt"]),
     "aceites_mt": v(32, 30, 40, "Mt", "Aceites vegetales almacenados; sin biodiésel, todo es comida.", ["aceites_veg_existencias_mt", "aceites_veg_frac_uso_alimentario"]),
@@ -83,17 +83,17 @@ VALORES = {
     "kcal_suministro_previo": v(3026, 2950, 3050, "kcal/persona/dia", "Suministro de comida por persona antes de la Unión (incluye desperdicio): es el ritmo al que se vaciaban esos inventarios.", ["kcal_suministro_per_capita_2024"]),
     "frac_cadena_perecedera": v(0.23, 0.18, 0.3, "fraccion", "Parte perecedera (en calorías) de ese inventario: frutas, verduras, lácteos y carne.", ["frac_pipeline_perecedero"]),
     "almacen_frio_mt": v(25, 10, 60, "Mt", "Comida en almacenes fríos del mundo (EE. UU. guarda 3.94 Mt).", ["almacen_frio_global_mt", "almacen_frio_eeuu_mt"]),
-    "kcal_kg_congelados": v(2100, 1800, 2400, "kcal/kg", "Energía promedio de lo congelado.", ["almacen_frio_eeuu_kcal_kg"]),
+    "kcal_kg_congelados": v(1930, 1750, 2150, "kcal/kg", "Energía promedio de lo congelado (carne, aves, queso, mantequilla, verdura y papa congeladas).", ["almacen_frio_eeuu_kcal_kg"]),
     # --- Fruta caída ---
     "fruta_caida_kcal_anio1": v(3.68e14, 1.15e14, 8.29e14, "kcal/anio", "Fruta y nueces caídas recuperables el primer año (incluye el fruto suelto de la palma aceitera; sin palma serían 1.83e14).", ["windfall_kcal_anio1", "windfall_kcal_anio1_sin_palma", "frac_fruta_que_cae", "frac_recuperable_caida"]),
     "declive_huerto_anual": v(0.12, 0.05, 0.25, "fraccion/anio", "Caída anual del rendimiento de los huertos sin poda, deshierbe ni control de plagas.", ["declive_huerto_anual"]),
     "piso_silvestre": v(0.35, 0.15, 0.6, "fraccion", "Lo que sigue dando un árbol asilvestrado respecto al año 1.", ["rendimiento_feral_relativo"]),
     "frac_conservacion_fruta": v(0.5, 0.0, 0.8, "fraccion", "Fracción de la fruta caída que la colmena seca, enlata o prensa en vez de comerla fresca.", ["receta_bebida"], "Canon: procesan primero lo que se va a echar a perder y lo convierten en bebida estable."),
     # --- Mascotas ---
-    "perros": v(9.87e8, 7.0e8, 1.0e9, "cabezas", "Perros en el mundo; más del 70% son de vida libre.", ["perros_mundo", "frac_perros_libres"]),
-    "gatos": v(6.0e8, 4.8e8, 1.0e9, "cabezas", "Gatos en el mundo.", ["gatos_mundo"]),
-    "kcal_dia_perro": v(1125, 630, 1410, "kcal/dia", "Requerimiento de un perro de 21.6 kg.", ["kcal_dia_perro"]),
-    "kcal_dia_gato": v(226, 190, 300, "kcal/dia", "Requerimiento de un gato.", ["kcal_dia_gato"]),
+    "perros": v(2.0e8, 1.75e8, 2.25e8, "cabezas", "Perros con dueño, los que alguien alimentaba (hay de 700 a 1,000 M de perros en total; más del 70% son de vida libre).", ["frac_perros_con_dueno", "perros_mundo", "frac_perros_libres"]),
+    "gatos": v(2.2e8, 2.0e8, 3.7e8, "cabezas", "Gatos con dueño.", ["gatos_con_dueno_mundo", "gatos_mundo"]),
+    "kcal_dia_perro": v(854, 533, 1409, "kcal/dia", "Requerimiento de un perro con dueño (~15 kg).", ["kcal_dia_perro_con_dueno", "kcal_dia_perro"]),
+    "kcal_dia_gato": v(238, 191, 277, "kcal/dia", "Requerimiento de un gato con dueño.", ["kcal_dia_gato_con_dueno", "kcal_dia_gato"]),
     # --- Productos animales ---
     "leche_kcal_anio": v(971.4e9 * 650, 953.2e9 * 610, 984.8e9 * 715, "kcal/anio", "Energía de la producción mundial de leche (971 Mt × 650 kcal/kg).", ["leche_produccion_mt", "kcal_kg_leche", "regla_ordenio"]),
     "dias_lactancia": v(305, 200, 365, "dias", "Duración de la lactancia.", ["dias_lactancia_estandar", "leche_requiere_partos"]),
@@ -129,12 +129,12 @@ TABLAS = {
 }
 
 GANADO = {
-    "bovinos": {"nombre": "Bovinos", "cabezas": 1.574e9, "kcal_comestible_cabeza": 280 * 875, "vida_natural_dias": 17 * 365, "mortalidad_liberado_anual": 0.35, "alimento_kcal_dia": 1490, "frac_pastoreo": 0.0, "fuentes": ["bovinos_cabezas", "peso_vivo_bovino_kg", "kcal_kg_peso_vivo_bovino", "vida_natural_bovino_anios", "frac_rumiantes_sobreviven_pastoreo"]},
-    "bufalos": {"nombre": "Búfalos", "cabezas": 2.12e8, "kcal_comestible_cabeza": 335 * 875, "vida_natural_dias": 20 * 365, "mortalidad_liberado_anual": 0.3, "alimento_kcal_dia": 500, "frac_pastoreo": 0.0, "fuentes": ["bufalos_cabezas", "peso_vivo_bufalo_kg"]},
-    "cerdos": {"nombre": "Cerdos", "cabezas": 9.66e8, "kcal_comestible_cabeza": 40 * 1537, "vida_natural_dias": 12 * 365, "mortalidad_liberado_anual": 1.5, "alimento_kcal_dia": 2980, "frac_pastoreo": 0.0, "fuentes": ["cerdos_cabezas", "peso_vivo_cerdo_kg", "vida_natural_cerdo_anios", "mortalidad_anual_cerda"]},
+    "bovinos": {"nombre": "Bovinos", "cabezas": 1.574e9, "kcal_comestible_cabeza": 280 * 795, "vida_natural_dias": 17 * 365, "mortalidad_liberado_anual": 0.35, "alimento_kcal_dia": 1490, "frac_pastoreo": 0.0, "fuentes": ["bovinos_cabezas", "peso_vivo_bovino_kg", "kcal_kg_peso_vivo_bovino", "vida_natural_bovino_anios", "frac_rumiantes_sobreviven_pastoreo", "concentrado_kg_cabeza_dia_vaca_lechera_mundial", "pienso_compuesto_mt_anio_bovinos_carne"]},
+    "bufalos": {"nombre": "Búfalos", "cabezas": 2.12e8, "kcal_comestible_cabeza": 335 * 795, "vida_natural_dias": 20 * 365, "mortalidad_liberado_anual": 0.3, "alimento_kcal_dia": 500, "frac_pastoreo": 0.0, "fuentes": ["bufalos_cabezas", "peso_vivo_bufalo_kg"]},
+    "cerdos": {"nombre": "Cerdos", "cabezas": 9.66e8, "kcal_comestible_cabeza": 40 * 1537, "vida_natural_dias": 12 * 365, "mortalidad_liberado_anual": 1.5, "alimento_kcal_dia": 2980, "frac_pastoreo": 0.0, "fuentes": ["cerdos_cabezas", "peso_vivo_cerdo_kg", "vida_natural_cerdo_anios", "mortalidad_anual_cerda", "pienso_kg_cabeza_dia_cerdo_promedio_hato"]},
     "ovinos_caprinos": {"nombre": "Ovejas y cabras", "cabezas": 2.519e9, "kcal_comestible_cabeza": 31.5 * 918, "vida_natural_dias": 13 * 365, "mortalidad_liberado_anual": 0.3, "alimento_kcal_dia": 150, "frac_pastoreo": 0.0, "fuentes": ["ovejas_cabezas", "cabras_cabezas", "peso_vivo_oveja_kg", "mortalidad_anual_ovino_caprino_adulto"]},
-    "pollos_engorda": {"nombre": "Pollos de engorda", "cabezas": 8.855e9, "kcal_comestible_cabeza": 1.5 * 1041, "vida_natural_dias": 120, "mortalidad_liberado_anual": 20.0, "alimento_kcal_dia": 300, "frac_pastoreo": 0.0, "fuentes": ["pollos_engorda_cabezas", "vida_natural_pollo_engorda_dias", "broilers_no_sobreviven_libre_acceso"]},
-    "gallinas_ponedoras": {"nombre": "Gallinas ponedoras", "cabezas": 8.53e9, "kcal_comestible_cabeza": 1.8 * 1041, "vida_natural_dias": 7 * 365, "mortalidad_liberado_anual": 2.0, "alimento_kcal_dia": 280, "frac_pastoreo": 0.0, "fuentes": ["gallinas_ponedoras_cabezas", "vida_natural_gallina_anios"]},
+    "pollos_engorda": {"nombre": "Pollos de engorda", "cabezas": 8.855e9, "kcal_comestible_cabeza": 1.5 * 1041, "vida_natural_dias": 120, "mortalidad_liberado_anual": 20.0, "alimento_kcal_dia": 500, "frac_pastoreo": 0.0, "fuentes": ["pollos_engorda_cabezas", "vida_natural_pollo_engorda_dias", "broilers_no_sobreviven_libre_acceso", "pienso_g_cabeza_dia_broiler_no_sacrificado"]},
+    "gallinas_ponedoras": {"nombre": "Gallinas ponedoras", "cabezas": 8.53e9, "kcal_comestible_cabeza": 1.8 * 1041, "vida_natural_dias": 7 * 365, "mortalidad_liberado_anual": 2.0, "alimento_kcal_dia": 339, "frac_pastoreo": 0.0, "fuentes": ["gallinas_ponedoras_cabezas", "vida_natural_gallina_anios", "pienso_g_cabeza_dia_ponedora"]},
     "otras_aves": {"nombre": "Otras aves (traspatio, patos, pavos, gansos)", "cabezas": 1.16e10, "kcal_comestible_cabeza": 1.51 * 1041, "vida_natural_dias": 6 * 365, "mortalidad_liberado_anual": 0.5, "alimento_kcal_dia": 100, "frac_pastoreo": 0.0, "fuentes": ["otros_pollos_cabezas", "patos_cabezas", "pavos_cabezas", "gansos_cabezas"]},
 }
 NOTA_GANADO = (

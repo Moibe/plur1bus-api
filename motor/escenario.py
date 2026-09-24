@@ -44,12 +44,12 @@ class Escenario(BaseModel):
     # --- Demanda -----------------------------------------------------------------
     kcal_dia_promedio: float = Field(
         default_factory=lambda: _s("kcal_dia_promedio"), ge=1200, le=3000,
-        description="Requerimiento energético promedio por persona al día. John Cena necesita 2,400 kcal en el canon.",
+        description="Requerimiento energético promedio por persona al día (toda la población). Con PAL 1.4 la colmena ahorra energía; sedentaria típica serían ~2,070 kcal. Ojo: las 2,400 kcal de John Cena (~114 kg) son un déficit, no su requerimiento.",
         json_schema_extra=_p("Demanda", "kcal por persona al día", 50, "kcal"),
     )
     adaptacion_metabolica: float = Field(
         default_factory=lambda: _s("adaptacion_metabolica"), ge=0, le=0.8,
-        description="Cuánto baja el gasto del cuerpo al agotarse la reserva (menos masa más termogénesis adaptativa). Con 0.65 se reproducen los 62 días de ayuno de los huelguistas de 1981 y las 24 semanas de Minnesota.",
+        description="Cuánto baja el gasto del cuerpo al agotarse la reserva (menos masa más termogénesis adaptativa). Calibrada en 0.7 contra el ayuno de los huelguistas de 1981, Minnesota y Leningrado.",
         json_schema_extra=_p("Demanda", "Adaptación metabólica", 0.05, "pct"),
     )
     natalidad: float = Field(
@@ -142,7 +142,7 @@ class Escenario(BaseModel):
     )
     mascotas_politica: Literal["alimentar", "liberar"] = Field(
         "liberar",
-        description="Canon: vaciaron los zoológicos y soltaron a los perros encadenados; solo cuidan a los que no se separan de su dueño. alimentar: darles de comer a todos (~1,000 M de perros y 600 M de gatos).",
+        description="Canon: vaciaron los zoológicos y soltaron a los perros encadenados; solo cuidan a los que no se separan de su dueño. alimentar: seguir alimentando a las mascotas que tenían dueño (~200 M de perros y 220 M de gatos).",
         json_schema_extra=_p("Animales", "Mascotas"),
     )
 

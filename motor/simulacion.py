@@ -135,6 +135,12 @@ def simular(e: Escenario) -> Resultado:
     ])  # kcal de reserva inicial por persona, (3, N_BINS)
     n = np.repeat((frac * n0 / N_BINS)[:, None], N_BINS, axis=1)
     reserva = np.ones_like(n)  # fracción de la reserva inicial que queda
+    # para el riesgo de desnutrición cuenta la reserva ABSOLUTA frente a la de una
+    # persona típica de su edad: quien ya era delgado llega antes al umbral
+    r0_rel = r0 / np.array([S.valor("reserva_mediana_" + c) for c in COHORTES])[:, None]
+    # sin perder peso no hay riesgo extra (el de ser delgado ya está en las muertes
+    # naturales): el umbral de cada bin es el general o su propio nivel, el menor
+    umbral_bin = np.minimum(S.valor("umbral_desnutricion"), r0_rel)
 
     muertes_frac = np.array([S.valor("frac_muertes_ninos"), 0.0, S.valor("frac_muertes_mayores")])
     muertes_frac[1] = 1.0 - muertes_frac[0] - muertes_frac[2]
@@ -143,7 +149,6 @@ def simular(e: Escenario) -> Resultado:
     tasa_crecer = np.array([1 / (15 * DIAS_ANIO), 1 / (50 * DIAS_ANIO)])  # niño->adulto, adulto->mayor
     recuperacion = S.valor("recuperacion_diaria")
     adaptacion = e.adaptacion_metabolica
-    umbral_desnutricion = S.valor("umbral_desnutricion")
     riesgo_desnutricion = S.valor("riesgo_desnutricion_max")
 
     factor_cuerpo = np.array([S.valor("factor_cuerpo_ninos"), 1.0, S.valor("factor_cuerpo_mayores")])
@@ -327,7 +332,7 @@ def simular(e: Escenario) -> Resultado:
         n[muere] = 0.0
         reserva[muere] = 1.0
         # con la reserva baja crece el riesgo de morir (infecciones, falla orgánica)
-        riesgo = riesgo_desnutricion * np.clip((umbral_desnutricion - reserva) / umbral_desnutricion, 0.0, 1.0) ** 2
+        riesgo = riesgo_desnutricion * np.clip((umbral_bin - reserva * r0_rel) / umbral_bin, 0.0, 1.0) ** 2
         desnutridos = n * riesgo
         n -= desnutridos
         hambre_cohorte += desnutridos.sum(axis=1)
