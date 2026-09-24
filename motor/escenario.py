@@ -28,8 +28,8 @@ def _s(clave: str) -> float:
 class Escenario(BaseModel):
     # --- General ---------------------------------------------------------------
     mes_union: int = Field(
-        11, ge=1, le=12,
-        description="Mes en que ocurre la Unión. Decide cuánto grano había guardado: justo antes de la cosecha del norte hay mucho menos que justo después. El canon no da fecha; el default es el mes del estreno (noviembre de 2025).",
+        7, ge=1, le=12,
+        description="Mes en que ocurre la Unión. Decide cuánto grano había guardado: el 1 de julio es el mínimo del año (~1,385 Mt) y el 1 de diciembre el máximo (~2,185 Mt). El canon no da fecha, pero las pistas (una botella envasada el 8 de mayo, el calor del día 1 en Albuquerque) apuntan a finales de primavera o verano.",
         json_schema_extra=_p("General", "Mes de la Unión", 1, "mes"),
     )
     anios: int = Field(
@@ -45,18 +45,18 @@ class Escenario(BaseModel):
         json_schema_extra=_p("Demanda", "kcal por persona al día", 50, "kcal"),
     )
     adaptacion_metabolica: float = Field(
-        default_factory=lambda: _s("adaptacion_metabolica"), ge=0, le=0.4,
-        description="Cuánto baja el gasto del cuerpo al agotarse la reserva (termogénesis adaptativa).",
+        default_factory=lambda: _s("adaptacion_metabolica"), ge=0, le=0.8,
+        description="Cuánto baja el gasto del cuerpo al agotarse la reserva (menos masa más termogénesis adaptativa). Con 0.65 se reproducen los 62 días de ayuno de los huelguistas de 1981 y las 24 semanas de Minnesota.",
         json_schema_extra=_p("Demanda", "Adaptación metabólica", 0.05, "pct"),
     )
     natalidad: float = Field(
-        1.0, ge=0, le=1,
-        description="Fracción de la natalidad previa que continúa después de los embarazos que ya estaban en curso (primeros 9 meses).",
-        json_schema_extra=_p("Demanda", "Natalidad", 0.05, "pct"),
+        1.0, ge=0, le=2,
+        description="Multiplicador sobre la natalidad del canon (965 nacimientos cada 10 minutos, ep. 8) después de los embarazos que ya estaban en curso (primeros 9 meses). 2.3 regresa a la natalidad de antes de la Unión.",
+        json_schema_extra=_p("Demanda", "Natalidad (x canon)", 0.05, "x"),
     )
     muertes_naturales_dia: float = Field(
         default_factory=lambda: _s("muertes_naturales_dia"), ge=0, le=250000,
-        description="Muertes diarias por causas naturales y accidentes al inicio (canon: casi 100,000). Escala con la población.",
+        description="Muertes diarias por causas naturales y accidentes al inicio: casi 100,000 según Cena; 241,000 según el conteo de Zosia en el ep. 8. Escala con la población.",
         json_schema_extra=_p("Demanda", "Muertes naturales al día", 5000, "entero"),
     )
 
@@ -138,17 +138,23 @@ class Escenario(BaseModel):
         json_schema_extra=_p("Animales", "Ganado"),
     )
     mascotas_politica: Literal["alimentar", "liberar"] = Field(
-        "alimentar",
-        description="Si la colmena sigue alimentando a perros y gatos.",
+        "liberar",
+        description="Canon: vaciaron los zoológicos y soltaron a los perros encadenados; solo cuidan a los que no se separan de su dueño. alimentar: darles de comer a todos (~1,000 M de perros y 600 M de gatos).",
         json_schema_extra=_p("Animales", "Mascotas"),
     )
 
-    # --- Resquicios (fuera del canon estricto) --------------------------------------------
-    resquicio_leche: float = Field(
-        0.0, ge=0, le=1,
-        description="Fracción de la producción previa de leche que se mantiene (ordeñar no mata; requiere ganado alimentado).",
-        json_schema_extra=_p("Resquicios", "Leche", 0.05, "pct"),
+    ordena_leche: float = Field(
+        1.0, ge=0, le=1,
+        description="Fracción de las vacas lecheras que se siguen ordeñando. Canon: el video de Cena dice que miles de millones de animales domésticos, sobre todo vacas, todavía necesitan ordeña.",
+        json_schema_extra=_p("Animales", "Ordeña", 0.05, "pct"),
     )
+    partos_ganado: bool = Field(
+        False,
+        description="Dejar que el ganado siga pariendo. Sin partos, la leche se acaba al terminar la lactancia en curso (~10 meses).",
+        json_schema_extra=_p("Animales", "Partos del ganado"),
+    )
+
+    # --- Resquicios (fuera del canon estricto) --------------------------------------------
     resquicio_huevos: float = Field(
         0.0, ge=0, le=1,
         description="Fracción de la producción previa de huevo que se mantiene (requiere gallinas alimentadas).",

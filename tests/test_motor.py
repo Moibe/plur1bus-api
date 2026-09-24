@@ -93,3 +93,24 @@ def test_api_simular_y_escenario():
     assert cuerpo["escenario"]["mes_union"] == 6
     assert len(cuerpo["serie"]["dia"]) == len(cuerpo["serie"]["poblacion"])
     assert c.post("/simular", json={"mes_union": 13}).status_code == 422
+
+
+def test_racion_fija_con_comida_de_sobra_se_estabiliza():
+    # Con 70% del requerimiento base el cuerpo adelgaza hasta gastar lo que come:
+    # nadie debería morir de hambre si la comida nunca se acaba.
+    r = _r(racion_modo="fija", racion_fraccion=0.7, cereal_en_mano_mt=5000, siembra_senescente=1, cosecha_senescente=1, anios=4)
+    assert r.resumen["muertes_hambre"] < 1e6
+    assert min(r.serie["reserva_corporal"][-10:]) > 0.3
+
+
+def test_estirar_retrasa_la_hambruna():
+    completa = _r(racion_modo="completa").resumen["dia_inicio_hambruna"]
+    estirar = _r(racion_modo="estirar", horizonte_estirar_anios=10).resumen["dia_inicio_hambruna"]
+    assert estirar > completa
+
+
+def test_leche_sin_partos_se_acaba():
+    r = _r(ordena_leche=1.0, partos_ganado=False, anios=2)
+    resquicios = r.serie["entradas_kcal"]["resquicios"]
+    assert resquicios[0] > 0
+    assert resquicios[-1] == 0

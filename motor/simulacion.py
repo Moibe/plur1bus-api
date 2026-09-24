@@ -121,15 +121,16 @@ def simular(e: Escenario) -> Resultado:
     cereal_mt = e.cereal_en_mano_mt if e.cereal_en_mano_mt is not None else S.tabla("cereal_en_mano_mt_por_mes")[mes0]
     f_otros = e.factor_otros_stocks
     poblacion_previa = n0 + S.valor("muertes_union")  # la cadena estaba surtida para antes de la Unión
-    consumo_previo = poblacion_previa * e.kcal_dia_promedio
+    consumo_previo = poblacion_previa * S.valor("kcal_suministro_previo")
     en_cadena = e.dias_inventario_cadena * consumo_previo
     kcal_cuerpo_promedio = float((frac * kcal_cuerpo).sum())
 
     pools = np.zeros(len(claves))
-    pools[idx["cereal"]] = cereal_mt * MT * S.valor("kcal_kg_cereal")
+    pools[idx["cereal"]] = cereal_mt * MT * S.valor("kcal_kg_cereal") * S.valor("frac_cereal_comestible")
     pools[idx["oleaginosas"]] = f_otros * MT * (
         S.valor("soya_mt") * S.valor("kcal_kg_soya")
         + S.valor("oleaginosas_otras_mt") * S.valor("kcal_kg_oleaginosas_otras")
+        + S.valor("harina_proteica_mt") * S.valor("kcal_kg_harina_proteica")
     )
     pools[idx["aceites"]] = f_otros * MT * S.valor("aceites_mt") * S.valor("kcal_kg_aceite")
     pools[idx["azucar"]] = f_otros * MT * S.valor("azucar_mt") * S.valor("kcal_kg_azucar")
@@ -172,7 +173,10 @@ def simular(e: Escenario) -> Resultado:
     piso = S.valor("piso_silvestre")
     cosecha_mes = S.tabla("cosecha_cereal_frac_por_mes")
     cosecha_kcal_anio = S.valor("cereal_produccion_mt") * MT * S.valor("kcal_kg_cereal")
-    leche_dia = e.resquicio_leche * S.valor("leche_kcal_anio") / DIAS_ANIO if alimentar else 0.0
+    # Canon: siguen ordeñando. Sin partos nuevos la leche se acaba al terminar la
+    # lactancia en curso (cada vaca va a la mitad, en promedio: caída lineal a cero).
+    leche_dia = e.ordena_leche * S.valor("leche_kcal_anio") / DIAS_ANIO
+    dias_lactancia = S.valor("dias_lactancia")
     huevo_dia = e.resquicio_huevos * S.valor("huevo_kcal_anio") / DIAS_ANIO if alimentar else 0.0
     miel_dia = e.resquicio_miel * S.valor("miel_kcal_anio") / DIAS_ANIO
 
@@ -210,7 +214,8 @@ def simular(e: Escenario) -> Resultado:
         pools[idx["azucar"]] += miel_dia
         lacteos = 0.0
         if i_bov is not None and cabezas0[i_bov] > 0:
-            lacteos += leche_dia * cabezas[i_bov] / cabezas0[i_bov]
+            lactancia = 1.0 if e.partos_ganado else max(0.0, 1 - t / dias_lactancia)
+            lacteos += leche_dia * lactancia * cabezas[i_bov] / cabezas0[i_bov]
         if i_pon is not None and cabezas0[i_pon] > 0:
             lacteos += huevo_dia * cabezas[i_pon] / cabezas0[i_pon]
         pools[idx["perecederos"]] += lacteos
@@ -227,8 +232,8 @@ def simular(e: Escenario) -> Resultado:
         # 2. Lo que se necesita hoy
         req = req_base[:, None] * (1 - adaptacion * (1 - reserva))  # kcal/persona/día
         nec_humanos = float((n * req).sum())
+        nec_base = float((n * req_base[:, None]).sum())
         por_recuperar = np.minimum(recuperacion * req_base[:, None], (1 - reserva) * r0)
-        nec_recuperar = float((n * por_recuperar).sum())
         nec_animales = float((cabezas * pienso).sum())
         nec_mascotas = mascotas_kcal
         necesidad = nec_humanos + nec_animales + nec_mascotas
@@ -236,14 +241,23 @@ def simular(e: Escenario) -> Resultado:
             necesidad_inicial = necesidad
         disponible = float(pools.sum())
 
+        # Plan de la colmena: cuánto le toca a cada quien si alcanza. En "completa"
+        # cada cuerpo come lo que gasta hoy (más un extra si viene de un bache); en
+        # "fija" y "estirar" la ración es una fracción del requerimiento BASE, así
+        # que el cuerpo se adapta, adelgaza y puede estabilizarse en un peso menor.
         if e.racion_modo == "completa":
-            meta = necesidad + nec_recuperar
-        elif e.racion_modo == "fija":
-            meta = e.racion_fraccion * necesidad
-        else:  # estirar: que alcance hasta la fecha objetivo contando lo que va entrando
-            dias_restantes = max(30.0, dias_estirar - t)
-            plan = (disponible + entrada_media * dias_restantes) / (necesidad * dias_restantes)
-            meta = min(1.0, max(e.racion_minima, plan)) * necesidad
+            fraccion_plan = 1.0
+            plan_persona = req + por_recuperar
+        else:
+            if e.racion_modo == "fija":
+                fraccion_plan = e.racion_fraccion
+            else:  # estirar: que alcance hasta la fecha objetivo contando lo que va entrando
+                dias_restantes = max(30.0, dias_estirar - t)
+                base_total = nec_base + nec_animales + nec_mascotas
+                fraccion_plan = min(1.0, max(e.racion_minima, (disponible + entrada_media * dias_restantes) / (base_total * dias_restantes)))
+            plan_persona = fraccion_plan * req_base[:, None] * np.ones_like(req)
+        meta_humanos = float((n * plan_persona).sum())
+        meta = meta_humanos + fraccion_plan * (nec_animales + nec_mascotas)
 
         comido = min(meta, disponible)
         falta = comido
@@ -255,14 +269,14 @@ def simular(e: Escenario) -> Resultado:
             reg_consumo[t, i] = toma
             falta -= toma
 
-        racion = min(1.0, comido / necesidad) if necesidad > 0 else 0.0
-        sobrante = max(0.0, comido - necesidad)
+        alcanza = comido / meta if meta > 0 else 0.0  # si no hay para el plan, todos reciben menos parejo
+        ingesta = plan_persona * alcanza
+        racion = min(1.0, float((n * ingesta).sum()) / nec_humanos) if nec_humanos > 0 else 0.0
+        racion_animales = fraccion_plan * alcanza
 
         # 3. Reservas corporales y muertes de hambre
-        reserva -= req * (1 - racion) / r0
-        if sobrante > 0 and nec_recuperar > 0:
-            reserva += por_recuperar * (sobrante / nec_recuperar) / r0
-            np.minimum(reserva, 1.0, out=reserva)
+        reserva += (ingesta - req) / r0
+        np.minimum(reserva, 1.0, out=reserva)
         muere = reserva <= 0
         hambre_cohorte = np.where(muere, n, 0.0).sum(axis=1)
         n[muere] = 0.0
@@ -292,14 +306,14 @@ def simular(e: Escenario) -> Resultado:
 
         # 5. Animales: muertes naturales, hambre si no alcanza el pienso
         muertes_ganado = cabezas * tasa_ganado
-        if alimentar and racion < 1:
-            muertes_ganado += cabezas * (pienso > 0) * (1 - racion) / DIAS_ANIMAL_SIN_COMIDA
+        if alimentar and racion_animales < 1:
+            muertes_ganado += cabezas * (pienso > 0) * (1 - racion_animales) / DIAS_ANIMAL_SIN_COMIDA
         muertes_ganado = np.minimum(muertes_ganado, cabezas)
         cabezas -= muertes_ganado
         carne = float((muertes_ganado * kcal_cabeza).sum()) * recupera_ganado
         pools[idx["carne_animal"]] += carne
         # las mascotas también envejecen y, si no alcanza la comida, se mueren de hambre
-        mascotas_kcal *= 1 - 1 / VIDA_MASCOTA_DIAS - (1 - racion) / DIAS_ANIMAL_SIN_COMIDA
+        mascotas_kcal *= 1 - 1 / VIDA_MASCOTA_DIAS - (1 - min(1.0, racion_animales)) / DIAS_ANIMAL_SIN_COMIDA
 
         # 6. Se echa a perder lo que se echa a perder
         pools *= 1 - decae

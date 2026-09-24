@@ -1,89 +1,937 @@
 {
-  "version": "0.0.1-provisional",
-  "nota": "Valores provisionales de la servilleta; se reemplazan por los investigados y verificados (datos/fuentes.json).",
-  "valores": {
-    "poblacion_colmena": {"valor": 7348292411, "bajo": 7348292411, "alto": 7348292411, "unidad": "personas", "descripcion": "Población de la colmena según el video de John Cena (ep. 6).", "fuentes": ["canon_poblacion_colmena"]},
-    "muertes_union": {"valor": 886477591, "bajo": 886477591, "alto": 886477591, "unidad": "personas", "descripcion": "Muertos durante la Unión.", "fuentes": ["canon_muertes_union"]},
-    "muertes_naturales_dia": {"valor": 100000, "bajo": 60000, "alto": 170000, "unidad": "personas/dia", "descripcion": "Muertes diarias por causas naturales y accidentes (canon: 'casi 100,000').", "fuentes": ["canon_muertes_diarias"]},
-    "frac_ninos": {"valor": 0.245, "bajo": 0.23, "alto": 0.26, "unidad": "fraccion", "descripcion": "Fracción de la población de 0 a 14 años.", "fuentes": []},
-    "frac_mayores": {"valor": 0.103, "bajo": 0.09, "alto": 0.11, "unidad": "fraccion", "descripcion": "Fracción de la población de 65 años o más.", "fuentes": []},
-    "kcal_dia_promedio": {"valor": 2100, "bajo": 1600, "alto": 2400, "unidad": "kcal/dia", "descripcion": "Requerimiento energético promedio por persona (toda la población).", "fuentes": []},
-    "ratio_req_ninos": {"valor": 0.70, "bajo": 0.6, "alto": 0.8, "unidad": "fraccion", "descripcion": "Requerimiento de un niño (0-14) relativo al promedio, antes de normalizar.", "fuentes": []},
-    "ratio_req_adultos": {"valor": 1.08, "bajo": 1.0, "alto": 1.15, "unidad": "fraccion", "descripcion": "Requerimiento de un adulto (15-64) relativo al promedio, antes de normalizar.", "fuentes": []},
-    "ratio_req_mayores": {"valor": 0.90, "bajo": 0.8, "alto": 1.0, "unidad": "fraccion", "descripcion": "Requerimiento de un mayor (65+) relativo al promedio, antes de normalizar.", "fuentes": []},
-    "reserva_mediana_ninos": {"valor": 30000, "bajo": 15000, "alto": 45000, "unidad": "kcal", "descripcion": "Reserva corporal movilizable mediana de un niño antes de morir de inanición.", "fuentes": []},
-    "reserva_mediana_adultos": {"valor": 110000, "bajo": 80000, "alto": 150000, "unidad": "kcal", "descripcion": "Reserva corporal movilizable mediana de un adulto antes de morir de inanición.", "fuentes": []},
-    "reserva_mediana_mayores": {"valor": 90000, "bajo": 60000, "alto": 130000, "unidad": "kcal", "descripcion": "Reserva corporal movilizable mediana de un mayor antes de morir de inanición.", "fuentes": []},
-    "reserva_sigma": {"valor": 0.55, "bajo": 0.35, "alto": 0.75, "unidad": "adimensional", "descripcion": "Dispersión (sigma lognormal) de las reservas corporales: bajo peso a obesidad.", "fuentes": []},
-    "adaptacion_metabolica": {"valor": 0.25, "bajo": 0.0, "alto": 0.4, "unidad": "fraccion", "descripcion": "Caída máxima del gasto energético cuando la reserva se agota (termogénesis adaptativa).", "fuentes": []},
-    "recuperacion_diaria": {"valor": 0.2, "bajo": 0.0, "alto": 0.3, "unidad": "fraccion", "descripcion": "Extra que una persona desnutrida puede comer al día para recuperar reserva, como fracción de su requerimiento.", "fuentes": []},
-    "natalidad_anual": {"valor": 0.016, "bajo": 0.0, "alto": 0.02, "unidad": "nacimientos/persona/anio", "descripcion": "Tasa bruta de natalidad previa a la Unión.", "fuentes": []},
-    "frac_muertes_ninos": {"valor": 0.09, "bajo": 0.05, "alto": 0.12, "unidad": "fraccion", "descripcion": "Fracción de las muertes naturales que son niños (0-14).", "fuentes": []},
-    "frac_muertes_mayores": {"valor": 0.55, "bajo": 0.45, "alto": 0.65, "unidad": "fraccion", "descripcion": "Fracción de las muertes naturales que son mayores (65+).", "fuentes": []},
-    "kcal_cuerpo_adulto": {"valor": 125822, "bajo": 100000, "alto": 140000, "unidad": "kcal", "descripcion": "Energía total de un cuerpo adulto de ~65 kg (Cole 2017).", "fuentes": ["kcal_cuerpo_humano"]},
-    "factor_cuerpo_ninos": {"valor": 0.35, "bajo": 0.2, "alto": 0.5, "unidad": "fraccion", "descripcion": "Energía del cuerpo de un niño relativa a un adulto.", "fuentes": []},
-    "factor_cuerpo_mayores": {"valor": 0.9, "bajo": 0.75, "alto": 1.0, "unidad": "fraccion", "descripcion": "Energía del cuerpo de un mayor relativa a un adulto.", "fuentes": []},
-    "factor_cuerpo_hambre": {"valor": 0.45, "bajo": 0.3, "alto": 0.6, "unidad": "fraccion", "descripcion": "Energía que queda en un cuerpo muerto de inanición relativa a uno normal (sin grasa).", "fuentes": []},
-    "rendimiento_hdp": {"valor": 0.75, "bajo": 0.5, "alto": 0.9, "unidad": "fraccion", "descripcion": "Fracción de la energía de un cuerpo que termina como HDP comestible.", "fuentes": []},
-    "frac_recuperacion_cuerpos": {"valor": 0.9, "bajo": 0.5, "alto": 1.0, "unidad": "fraccion", "descripcion": "Fracción de los cuerpos que la colmena recupera y procesa.", "fuentes": []},
-    "kcal_kg_cereal": {"valor": 3450, "bajo": 3300, "alto": 3600, "unidad": "kcal/kg", "descripcion": "Energía promedio del cereal (trigo, maíz, arroz).", "fuentes": []},
-    "perdida_cereal_anual": {"valor": 0.03, "bajo": 0.01, "alto": 0.12, "unidad": "fraccion/anio", "descripcion": "Pérdida anual del grano almacenado (plagas, humedad).", "fuentes": []},
-    "cereal_produccion_mt": {"valor": 2971, "bajo": 2850, "alto": 3000, "unidad": "Mt/anio", "descripcion": "Producción mundial de cereal 2025.", "fuentes": []},
-    "soya_mt": {"valor": 123, "bajo": 100, "alto": 140, "unidad": "Mt", "descripcion": "Existencias mundiales de soya.", "fuentes": []},
-    "oleaginosas_otras_mt": {"valor": 30, "bajo": 15, "alto": 45, "unidad": "Mt", "descripcion": "Existencias de otras oleaginosas.", "fuentes": []},
-    "aceites_mt": {"valor": 30, "bajo": 20, "alto": 40, "unidad": "Mt", "descripcion": "Existencias mundiales de aceites vegetales.", "fuentes": []},
-    "azucar_mt": {"valor": 45, "bajo": 35, "alto": 70, "unidad": "Mt", "descripcion": "Existencias mundiales de azúcar.", "fuentes": []},
-    "legumbres_mt": {"valor": 20, "bajo": 10, "alto": 30, "unidad": "Mt", "descripcion": "Existencias de legumbres secas.", "fuentes": []},
-    "tuberculos_mt": {"valor": 60, "bajo": 20, "alto": 120, "unidad": "Mt", "descripcion": "Papa y tubérculos en almacén.", "fuentes": []},
-    "kcal_kg_soya": {"valor": 4460, "bajo": 4400, "alto": 4500, "unidad": "kcal/kg", "descripcion": "Energía de la soya.", "fuentes": []},
-    "kcal_kg_oleaginosas_otras": {"valor": 5000, "bajo": 4500, "alto": 5800, "unidad": "kcal/kg", "descripcion": "Energía de otras oleaginosas.", "fuentes": []},
-    "kcal_kg_aceite": {"valor": 8840, "bajo": 8800, "alto": 8900, "unidad": "kcal/kg", "descripcion": "Energía del aceite vegetal.", "fuentes": []},
-    "kcal_kg_azucar": {"valor": 3870, "bajo": 3850, "alto": 3870, "unidad": "kcal/kg", "descripcion": "Energía del azúcar.", "fuentes": []},
-    "kcal_kg_legumbres": {"valor": 3400, "bajo": 3300, "alto": 3500, "unidad": "kcal/kg", "descripcion": "Energía de legumbres secas.", "fuentes": []},
-    "kcal_kg_tuberculos": {"valor": 770, "bajo": 700, "alto": 1100, "unidad": "kcal/kg", "descripcion": "Energía de la papa cruda.", "fuentes": []},
-    "dias_inventario_cadena": {"valor": 25, "bajo": 10, "alto": 45, "unidad": "dias", "descripcion": "Días de consumo guardados en la cadena de suministro (tiendas, bodegas, despensas).", "fuentes": []},
-    "frac_cadena_perecedera": {"valor": 0.35, "bajo": 0.2, "alto": 0.5, "unidad": "fraccion", "descripcion": "Parte perecedera de ese inventario.", "fuentes": []},
-    "almacen_frio_mt": {"valor": 30, "bajo": 10, "alto": 60, "unidad": "Mt", "descripcion": "Comida en almacenes fríos en el mundo (carne, pescado, lácteos congelados).", "fuentes": []},
-    "kcal_kg_congelados": {"valor": 2000, "bajo": 1500, "alto": 2500, "unidad": "kcal/kg", "descripcion": "Energía promedio de lo congelado.", "fuentes": []},
-    "fruta_caida_kcal_anio1": {"valor": 3.0e14, "bajo": 1.0e14, "alto": 6.0e14, "unidad": "kcal/anio", "descripcion": "Fruta y nueces caídas recuperables en el primer año.", "fuentes": []},
-    "declive_huerto_anual": {"valor": 0.12, "bajo": 0.05, "alto": 0.3, "unidad": "fraccion/anio", "descripcion": "Caída anual del rendimiento de huertos sin poda, deshierbe ni control de plagas.", "fuentes": []},
-    "piso_silvestre": {"valor": 0.35, "bajo": 0.1, "alto": 0.6, "unidad": "fraccion", "descripcion": "Fracción de la fruta del año 1 que sigue cayendo a largo plazo (árboles asilvestrados y silvestres).", "fuentes": []},
-    "frac_conservacion_fruta": {"valor": 0.5, "bajo": 0.0, "alto": 0.8, "unidad": "fraccion", "descripcion": "Fracción de la fruta caída que la colmena seca o enlata en vez de comerla fresca.", "fuentes": []},
-    "perros": {"valor": 9.0e8, "bajo": 7.0e8, "alto": 1.0e9, "unidad": "cabezas", "descripcion": "Perros en el mundo (con dueño y callejeros).", "fuentes": []},
-    "gatos": {"valor": 6.0e8, "bajo": 4.0e8, "alto": 7.0e8, "unidad": "cabezas", "descripcion": "Gatos en el mundo.", "fuentes": []},
-    "kcal_dia_perro": {"valor": 700, "bajo": 400, "alto": 1000, "unidad": "kcal/dia", "descripcion": "Requerimiento de un perro promedio.", "fuentes": []},
-    "kcal_dia_gato": {"valor": 250, "bajo": 200, "alto": 300, "unidad": "kcal/dia", "descripcion": "Requerimiento de un gato promedio.", "fuentes": []},
-    "leche_kcal_anio": {"valor": 6.08e14, "bajo": 5.5e14, "alto": 6.5e14, "unidad": "kcal/anio", "descripcion": "Energía de la producción mundial de leche (950 Mt x 640 kcal/kg).", "fuentes": []},
-    "huevo_kcal_anio": {"valor": 1.33e14, "bajo": 1.2e14, "alto": 1.45e14, "unidad": "kcal/anio", "descripcion": "Energía de la producción mundial de huevo (93 Mt x 1,430 kcal/kg).", "fuentes": []},
-    "miel_kcal_anio": {"valor": 5.5e12, "bajo": 5.0e12, "alto": 6.0e12, "unidad": "kcal/anio", "descripcion": "Energía de la producción mundial de miel (1.8 Mt x 3,040 kcal/kg).", "fuentes": []},
-    "frac_recuperacion_cadaver_alimentado": {"valor": 0.8, "bajo": 0.5, "alto": 0.95, "unidad": "fraccion", "descripcion": "Fracción de la carne recuperada de animales que mueren en granja.", "fuentes": []},
-    "frac_recuperacion_cadaver_liberado": {"valor": 0.2, "bajo": 0.05, "alto": 0.4, "unidad": "fraccion", "descripcion": "Fracción de la carne recuperada de animales liberados que mueren en el campo.", "fuentes": []}
+ "version": "0.1.0",
+ "nota": "Valores investigados y verificados con fuentes (FAO, USDA, ONU, OMS, literatura) más los números del canon. Los rangos son los que se exploran como palancas.",
+ "valores": {
+  "poblacion_colmena": {
+   "valor": 7348292411,
+   "bajo": 7348292411,
+   "alto": 7348292411,
+   "unidad": "personas",
+   "descripcion": "Población de la colmena según el video de John Cena (ep. 6).",
+   "fuentes": [
+    "canon_poblacion_colmena"
+   ]
   },
-  "tablas": {
-    "cereal_en_mano_mt_por_mes": {"valores": [2200, 2050, 1900, 1750, 1600, 1450, 1500, 1650, 1850, 2150, 2400, 2350], "unidad": "Mt", "descripcion": "Cereal físicamente almacenado en el mundo el día 1 de cada mes (enero a diciembre).", "fuentes": [], "derivacion": "Provisional: existencias de cierre (~950 Mt) más la parte de la cosecha del año ya levantada y no consumida."},
-    "cosecha_cereal_frac_por_mes": {"valores": [0.04, 0.04, 0.06, 0.06, 0.06, 0.10, 0.12, 0.10, 0.12, 0.15, 0.10, 0.05], "unidad": "fraccion", "descripcion": "Fracción de la cosecha mundial de cereal levantada en cada mes.", "fuentes": []},
-    "fruta_caida_frac_por_mes": {"valores": [0.05, 0.04, 0.04, 0.05, 0.06, 0.08, 0.10, 0.12, 0.14, 0.13, 0.10, 0.09], "unidad": "fraccion", "descripcion": "Fracción de la fruta caída del año que cae en cada mes.", "fuentes": []}
+  "muertes_union": {
+   "valor": 886477591,
+   "bajo": 886477591,
+   "alto": 886477591,
+   "unidad": "personas",
+   "descripcion": "Muertos durante la Unión (Zosia, ep. 2).",
+   "fuentes": [
+    "canon_muertes_union"
+   ]
   },
-  "ganado": {
-    "bovinos": {"nombre": "Bovinos", "cabezas": 1.55e9, "kcal_comestible_cabeza": 400000, "vida_natural_dias": 7300, "mortalidad_liberado_anual": 0.15, "alimento_kcal_dia": 8000, "frac_pastoreo": 0.7, "fuentes": []},
-    "bufalos": {"nombre": "Búfalos", "cabezas": 2.0e8, "kcal_comestible_cabeza": 360000, "vida_natural_dias": 7300, "mortalidad_liberado_anual": 0.15, "alimento_kcal_dia": 8000, "frac_pastoreo": 0.7, "fuentes": []},
-    "cerdos": {"nombre": "Cerdos", "cabezas": 9.8e8, "kcal_comestible_cabeza": 148500, "vida_natural_dias": 5475, "mortalidad_liberado_anual": 0.4, "alimento_kcal_dia": 7000, "frac_pastoreo": 0.1, "fuentes": []},
-    "ovinos_caprinos": {"nombre": "Ovejas y cabras", "cabezas": 2.4e9, "kcal_comestible_cabeza": 45000, "vida_natural_dias": 4380, "mortalidad_liberado_anual": 0.2, "alimento_kcal_dia": 1500, "frac_pastoreo": 0.9, "fuentes": []},
-    "pollos_engorda": {"nombre": "Pollos de engorda", "cabezas": 1.8e10, "kcal_comestible_cabeza": 3500, "vida_natural_dias": 120, "mortalidad_liberado_anual": 3.0, "alimento_kcal_dia": 400, "frac_pastoreo": 0.0, "fuentes": []},
-    "gallinas_ponedoras": {"nombre": "Gallinas ponedoras", "cabezas": 8.0e9, "kcal_comestible_cabeza": 2100, "vida_natural_dias": 2190, "mortalidad_liberado_anual": 1.0, "alimento_kcal_dia": 330, "frac_pastoreo": 0.1, "fuentes": []}
+  "muertes_naturales_dia": {
+   "valor": 100000,
+   "bajo": 100000,
+   "alto": 241056,
+   "unidad": "personas/dia",
+   "descripcion": "Muertes diarias por causas naturales y accidentes. Canon: 'casi 100,000' (Cena); Zosia cuenta 1,674 en 10 minutos en el ep. 8, o sea 241 mil al día.",
+   "fuentes": [
+    "canon_muertes_diarias",
+    "canon_muertes_diarias_ep8",
+    "muertes_dia_colmena"
+   ]
   },
-  "pools": {
-    "perecederos": {"nombre": "Frescos", "vida_media_dias": 7},
-    "tuberculos": {"nombre": "Papa y tubérculos", "vida_media_dias": 120},
-    "aceites": {"nombre": "Aceites vegetales", "vida_media_dias": 1500},
-    "conservas": {"nombre": "Fruta seca o en conserva", "vida_media_dias": 2500},
-    "procesados": {"nombre": "Comida empacada", "vida_media_dias": 2500},
-    "carne_animal": {"nombre": "Carne de animales muertos", "vida_media_dias": 2500},
-    "hdp": {"nombre": "HDP", "vida_media_dias": 2500},
-    "congelados": {"nombre": "Congelados", "vida_media_dias": 5000},
-    "oleaginosas": {"nombre": "Soya y oleaginosas", "vida_media_dias": 8000},
-    "cereal": {"nombre": "Cereal", "vida_media_dias": null},
-    "legumbres": {"nombre": "Legumbres", "vida_media_dias": 12000},
-    "azucar": {"nombre": "Azúcar y miel", "vida_media_dias": 50000}
+  "natalidad_anual": {
+   "valor": 0.0069,
+   "bajo": 0.0,
+   "alto": 0.0161,
+   "unidad": "nacimientos/persona/anio",
+   "descripcion": "Tasa de natalidad. Canon: 965 nacimientos en 10 minutos (ep. 8), unos 139 mil al día; antes de la Unión era de 16.1 por mil.",
+   "fuentes": [
+    "canon_nacimientos_diarios",
+    "nacimientos_anio"
+   ],
+   "derivacion": "138,960 × 365 / 7,348,292,411 = 0.0069 por persona al año."
+  },
+  "frac_ninos": {
+   "valor": 0.244,
+   "bajo": 0.241,
+   "alto": 0.247,
+   "unidad": "fraccion",
+   "descripcion": "Fracción de la población de 0 a 14 años (ONU, WPP 2024, año 2025).",
+   "fuentes": [
+    "frac_0_4",
+    "frac_5_14"
+   ]
+  },
+  "frac_mayores": {
+   "valor": 0.104,
+   "bajo": 0.101,
+   "alto": 0.106,
+   "unidad": "fraccion",
+   "descripcion": "Fracción de la población de 65 años o más (ONU, WPP 2024, año 2025).",
+   "fuentes": [
+    "frac_65_mas"
+   ]
+  },
+  "kcal_dia_promedio": {
+   "valor": 2050,
+   "bajo": 1815,
+   "alto": 2450,
+   "unidad": "kcal/dia",
+   "descripcion": "Requerimiento energético promedio de una colmena sedentaria (PAL 1.55). Activa sería ~2,379 (ADER de la FAO); John Cena necesita 2,400.",
+   "fuentes": [
+    "kcal_requerimiento_sedentario_poblacional",
+    "kcal_requerimiento_promedio",
+    "canon_kcal_dia_cena"
+   ]
+  },
+  "ratio_req_ninos": {
+   "valor": 0.701,
+   "bajo": 0.62,
+   "alto": 0.78,
+   "unidad": "fraccion",
+   "descripcion": "Requerimiento de un niño (0-14) relativo al promedio.",
+   "fuentes": [
+    "kcal_nino_0_4",
+    "kcal_nino_5_14"
+   ],
+   "derivacion": "Promedio ponderado de 0-4 (1,000) y 5-14 (1,650) = 1,442 kcal, entre el promedio poblacional de 2,057."
+  },
+  "ratio_req_adultos": {
+   "valor": 1.128,
+   "bajo": 1.05,
+   "alto": 1.2,
+   "unidad": "fraccion",
+   "descripcion": "Requerimiento de un adulto (15-64) relativo al promedio.",
+   "fuentes": [
+    "kcal_sedentario_adulto"
+   ],
+   "derivacion": "2,320 / 2,057."
+  },
+  "ratio_req_mayores": {
+   "valor": 0.899,
+   "bajo": 0.8,
+   "alto": 1.0,
+   "unidad": "fraccion",
+   "descripcion": "Requerimiento de un mayor (65+) relativo al promedio.",
+   "fuentes": [
+    "kcal_adulto_mayor_65"
+   ],
+   "derivacion": "1,850 / 2,057."
+  },
+  "reserva_mediana_adultos": {
+   "valor": 112000,
+   "bajo": 70000,
+   "alto": 160000,
+   "unidad": "kcal",
+   "descripcion": "Reserva corporal movilizable mediana de un adulto antes de morir de inanición (grasa utilizable más la mitad de la proteína).",
+   "fuentes": [
+    "reserva_energetica_movilizable_kcal",
+    "grasa_movilizable_kg",
+    "kcal_por_kg_grasa"
+   ],
+   "derivacion": "Promedio de 130,000 kcal; con dispersión lognormal de sigma 0.6 la mediana es 130,000 / e^(0.6²/2) ≈ 112,000."
+  },
+  "reserva_mediana_ninos": {
+   "valor": 30000,
+   "bajo": 15000,
+   "alto": 45000,
+   "unidad": "kcal",
+   "descripcion": "Reserva mediana de un niño (0-14): de ~15 mil kcal en menores de 5 a ~35 mil en escolares.",
+   "fuentes": [
+    "masa_promedio_poblacion_kg"
+   ],
+   "derivacion": "Supuesto: 5-14 años, ~25 kg con 4-5 kg de grasa utilizable; 0-4 años, ~12 kg."
+  },
+  "reserva_mediana_mayores": {
+   "valor": 95000,
+   "bajo": 60000,
+   "alto": 130000,
+   "unidad": "kcal",
+   "descripcion": "Reserva mediana de un mayor (65+): más grasa, pero menos tolerancia.",
+   "fuentes": [
+    "frac_grasa_corporal_adulto",
+    "masa_fallecido_adulto_mayor_kg"
+   ]
+  },
+  "reserva_sigma": {
+   "valor": 0.6,
+   "bajo": 0.4,
+   "alto": 0.8,
+   "unidad": "adimensional",
+   "descripcion": "Dispersión (sigma lognormal) de las reservas, del bajo peso (390 M de adultos) a la obesidad (890 M).",
+   "fuentes": [
+    "adultos_bajo_peso",
+    "adultos_sobrepeso",
+    "adultos_obesidad"
+   ],
+   "derivacion": "Con sigma 0.6, el percentil 5 queda en ~42 mil kcal (bajo peso) y el 95 en ~300 mil (obesidad)."
+  },
+  "adaptacion_metabolica": {
+   "valor": 0.65,
+   "bajo": 0.3,
+   "alto": 0.8,
+   "unidad": "fraccion",
+   "descripcion": "Caída máxima del gasto energético al agotarse la reserva (menos masa más termogénesis adaptativa).",
+   "fuentes": [
+    "reduccion_gasto_inanicion",
+    "dias_supervivencia_ayuno_total",
+    "frac_peso_final_semiinanicion_24sem"
+   ],
+   "derivacion": "Calibrado para reproducir 62 días de ayuno total (huelguistas de 1981, reserva de ~90 mil kcal) y 24 semanas sin muertes con ~45% de la ración (Minnesota)."
+  },
+  "recuperacion_diaria": {
+   "valor": 0.2,
+   "bajo": 0.0,
+   "alto": 0.3,
+   "unidad": "fraccion",
+   "descripcion": "Extra que una persona desnutrida puede comer al día para recuperar reserva, como fracción de su requerimiento.",
+   "fuentes": [],
+   "derivacion": "Supuesto del modelo."
+  },
+  "frac_muertes_ninos": {
+   "valor": 0.097,
+   "bajo": 0.09,
+   "alto": 0.105,
+   "unidad": "fraccion",
+   "descripcion": "Fracción de las muertes naturales que son niños (0-14).",
+   "fuentes": [
+    "frac_muertes_0_4"
+   ],
+   "derivacion": "0-4: 7.8% más 5-14: 1.9% (WPP 2024, año 2023)."
+  },
+  "frac_muertes_mayores": {
+   "valor": 0.598,
+   "bajo": 0.58,
+   "alto": 0.62,
+   "unidad": "fraccion",
+   "descripcion": "Fracción de las muertes naturales que son mayores (65+).",
+   "fuentes": [
+    "frac_muertes_65_mas"
+   ]
+  },
+  "kcal_cuerpo_adulto": {
+   "valor": 125822,
+   "bajo": 100000,
+   "alto": 143771,
+   "unidad": "kcal",
+   "descripcion": "Energía comestible de un cuerpo adulto de 66 kg (Cole 2017); con esqueleto y piel, 143,771.",
+   "fuentes": [
+    "kcal_cuerpo_humano",
+    "kcal_cuerpo_humano_total",
+    "ref_kcal_cuerpo_humano_comestible"
+   ]
+  },
+  "masa_fallecido_promedio_kg": {
+   "valor": 53,
+   "bajo": 47,
+   "alto": 59,
+   "unidad": "kg",
+   "descripcion": "Masa promedio de quien muere por causas naturales (sobre todo ancianos).",
+   "fuentes": [
+    "masa_fallecido_promedio_kg"
+   ]
+  },
+  "factor_cuerpo_ninos": {
+   "valor": 0.3,
+   "bajo": 0.17,
+   "alto": 0.45,
+   "unidad": "fraccion",
+   "descripcion": "Energía del cuerpo de un niño relativa a la de un adulto.",
+   "fuentes": [
+    "masa_promedio_poblacion_kg"
+   ],
+   "derivacion": "Niños de la Unión, ~20 kg, frente a los 66 kg de referencia."
+  },
+  "factor_cuerpo_mayores": {
+   "valor": 0.85,
+   "bajo": 0.75,
+   "alto": 0.95,
+   "unidad": "fraccion",
+   "descripcion": "Energía del cuerpo de un mayor relativa a la de un adulto.",
+   "fuentes": [
+    "masa_fallecido_adulto_mayor_kg"
+   ],
+   "derivacion": "~56 kg / 66 kg."
+  },
+  "factor_cuerpo_hambre": {
+   "valor": 0.4,
+   "bajo": 0.3,
+   "alto": 0.5,
+   "unidad": "fraccion",
+   "descripcion": "Energía que queda en un cuerpo muerto de inanición relativa a uno normal: sin grasa y con 40% menos músculo.",
+   "fuentes": [
+    "frac_perdida_peso_letal"
+   ],
+   "derivacion": "Un cuerpo emaciado rinde ~40-60 mil kcal frente a 125,822."
+  },
+  "rendimiento_hdp": {
+   "valor": 0.75,
+   "bajo": 0.5,
+   "alto": 0.9,
+   "unidad": "fraccion",
+   "descripcion": "Fracción de la energía de un cuerpo que termina como HDP comestible (molienda, cocción, secado).",
+   "fuentes": [],
+   "derivacion": "Supuesto del modelo; el canon muestra molinos, cubas de cocción y polvo reconstituido."
+  },
+  "frac_recuperacion_cuerpos": {
+   "valor": 0.9,
+   "bajo": 0.5,
+   "alto": 1.0,
+   "unidad": "fraccion",
+   "descripcion": "Fracción de los cuerpos que la colmena recupera y procesa.",
+   "fuentes": [
+    "cuerpos_union_recolectados",
+    "procesamiento_hdp"
+   ],
+   "derivacion": "Canon: recogen cadáveres y el almacén refrigerado Agri-Jet está lleno de partes envasadas al vacío."
+  },
+  "kcal_kg_cereal": {
+   "valor": 3536,
+   "bajo": 3482,
+   "alto": 3567,
+   "unidad": "kcal/kg",
+   "descripcion": "Energía del cereal almacenado, ponderada por existencias (trigo, maíz, arroz elaborado y granos menores).",
+   "fuentes": [
+    "kcal_kg_cereal_promedio",
+    "kcal_kg_trigo",
+    "kcal_kg_maiz",
+    "kcal_kg_arroz"
+   ]
+  },
+  "frac_cereal_comestible": {
+   "valor": 0.96,
+   "bajo": 0.9,
+   "alto": 0.99,
+   "unidad": "fraccion",
+   "descripcion": "Fracción del cereal almacenado apta para humanos: el grano forrajero es casi todo comestible, salvo el dañado o con micotoxinas.",
+   "fuentes": [
+    "frac_pienso_comestible_humano",
+    "cereal_uso_pienso_mt",
+    "frac_cultivos_micotoxinas_sobre_limite"
+   ],
+   "derivacion": "38% del uso es pienso × 10% no apto ≈ 4%."
+  },
+  "perdida_cereal_anual": {
+   "valor": 0.045,
+   "bajo": 0.01,
+   "alto": 0.18,
+   "unidad": "fraccion/anio",
+   "descripcion": "Pérdida anual del grano almacenado. En silos herméticos es menor al 1%; con pequeños productores en el trópico, de 18 a 36%.",
+   "fuentes": [
+    "perdida_almacen_anual",
+    "perdida_almacen_anual_buena",
+    "perdida_almacen_anual_pequeno_productor"
+   ]
+  },
+  "cereal_produccion_mt": {
+   "valor": 3019,
+   "bajo": 2980,
+   "alto": 3043,
+   "unidad": "Mt/anio",
+   "descripcion": "Producción mundial de cereal 2025 (USDA PSD; FAO: 3,043 Mt). Solo cuenta si se permite recoger grano de plantas muertas.",
+   "fuentes": [
+    "cereal_produccion_2025_mt"
+   ]
+  },
+  "soya_mt": {
+   "valor": 300,
+   "bajo": 125,
+   "alto": 450,
+   "unidad": "Mt",
+   "descripcion": "Soya almacenada en una fecha promedio del año (las existencias de cierre, 125 Mt, son el mínimo del ciclo).",
+   "fuentes": [
+    "soya_existencias_mt",
+    "soya_existencias_promedio_anual_mt",
+    "soya_produccion_mt"
+   ],
+   "derivacion": "125 + 0.85 × 429 / 2 ≈ 307 Mt, redondeado a 300."
+  },
+  "oleaginosas_otras_mt": {
+   "valor": 70,
+   "bajo": 20,
+   "alto": 120,
+   "unidad": "Mt",
+   "descripcion": "Colza, girasol, cacahuate y otras oleaginosas almacenadas en una fecha promedio.",
+   "fuentes": [
+    "oleaginosas_otras_existencias_mt",
+    "colza_existencias_mt",
+    "girasol_existencias_mt",
+    "cacahuate_existencias_mt"
+   ],
+   "derivacion": "Cierre de 20.6 Mt más la parte de las cosechas del año que aún no se consume."
+  },
+  "harina_proteica_mt": {
+   "valor": 24,
+   "bajo": 22.5,
+   "alto": 24.7,
+   "unidad": "Mt",
+   "descripcion": "Harinas proteicas almacenadas (sobre todo pasta de soya).",
+   "fuentes": [
+    "harina_proteica_existencias_mt"
+   ]
+  },
+  "aceites_mt": {
+   "valor": 32,
+   "bajo": 30,
+   "alto": 40,
+   "unidad": "Mt",
+   "descripcion": "Aceites vegetales almacenados; sin biodiésel, todo es comida.",
+   "fuentes": [
+    "aceites_veg_existencias_mt",
+    "aceites_veg_frac_uso_alimentario"
+   ]
+  },
+  "azucar_mt": {
+   "valor": 80,
+   "bajo": 43.5,
+   "alto": 140,
+   "unidad": "Mt",
+   "descripcion": "Azúcar almacenada: USDA da 43.5 Mt al cierre, la ISO ~79 Mt y el promedio anual ronda 100 Mt.",
+   "fuentes": [
+    "azucar_existencias_mt",
+    "azucar_existencias_iso_mt",
+    "azucar_existencias_promedio_mt"
+   ]
+  },
+  "legumbres_mt": {
+   "valor": 45,
+   "bajo": 15,
+   "alto": 80,
+   "unidad": "Mt",
+   "descripcion": "Legumbres secas almacenadas (no hay cifra oficial mundial).",
+   "fuentes": [
+    "legumbres_existencias_mt",
+    "legumbres_existencias_promedio_mt"
+   ]
+  },
+  "tuberculos_mt": {
+   "valor": 115,
+   "bajo": 50,
+   "alto": 190,
+   "unidad": "Mt",
+   "descripcion": "Papa en almacén en una fecha promedio. La yuca no cuenta: se pudre en 2-3 días fuera de la tierra.",
+   "fuentes": [
+    "papa_en_almacen_mt",
+    "yuca_produccion_mt"
+   ]
+  },
+  "kcal_kg_soya": {
+   "valor": 4460,
+   "bajo": 4460,
+   "alto": 4460,
+   "unidad": "kcal/kg",
+   "descripcion": "Energía de la soya (hay que cocerla).",
+   "fuentes": [
+    "kcal_kg_soya"
+   ]
+  },
+  "kcal_kg_oleaginosas_otras": {
+   "valor": 5000,
+   "bajo": 4500,
+   "alto": 5840,
+   "unidad": "kcal/kg",
+   "descripcion": "Energía promedio de otras oleaginosas.",
+   "fuentes": [
+    "kcal_kg_cacahuate"
+   ]
+  },
+  "kcal_kg_harina_proteica": {
+   "valor": 3270,
+   "bajo": 3000,
+   "alto": 3300,
+   "unidad": "kcal/kg",
+   "descripcion": "Energía de la harina de soya desgrasada.",
+   "fuentes": [
+    "harina_proteica_existencias_mt"
+   ]
+  },
+  "kcal_kg_aceite": {
+   "valor": 8840,
+   "bajo": 8840,
+   "alto": 8920,
+   "unidad": "kcal/kg",
+   "descripcion": "Energía del aceite vegetal.",
+   "fuentes": [
+    "kcal_kg_aceite"
+   ]
+  },
+  "kcal_kg_azucar": {
+   "valor": 3870,
+   "bajo": 3850,
+   "alto": 3870,
+   "unidad": "kcal/kg",
+   "descripcion": "Energía del azúcar.",
+   "fuentes": [
+    "kcal_kg_azucar"
+   ]
+  },
+  "kcal_kg_legumbres": {
+   "valor": 3480,
+   "bajo": 3330,
+   "alto": 3780,
+   "unidad": "kcal/kg",
+   "descripcion": "Energía promedio de las legumbres secas.",
+   "fuentes": [
+    "kcal_kg_legumbres"
+   ]
+  },
+  "kcal_kg_tuberculos": {
+   "valor": 770,
+   "bajo": 770,
+   "alto": 860,
+   "unidad": "kcal/kg",
+   "descripcion": "Energía de la papa cruda.",
+   "fuentes": [
+    "kcal_kg_papa"
+   ]
+  },
+  "dias_inventario_cadena": {
+   "valor": 32,
+   "bajo": 15,
+   "alto": 60,
+   "unidad": "dias",
+   "descripcion": "Días de venta guardados en tiendas (~10), distribución (~15) y despensas (~7), que la colmena centraliza desde el día 4.",
+   "fuentes": [
+    "dias_inventario_retail",
+    "dias_inventario_mayoreo",
+    "dias_despensa_hogar",
+    "consolidacion_recursos"
+   ],
+   "derivacion": "Sin manufactura, para no contar dos veces materias primas que ya están en las existencias."
+  },
+  "kcal_suministro_previo": {
+   "valor": 3026,
+   "bajo": 2950,
+   "alto": 3050,
+   "unidad": "kcal/persona/dia",
+   "descripcion": "Suministro de comida por persona antes de la Unión (incluye desperdicio): es el ritmo al que se vaciaban esos inventarios.",
+   "fuentes": [
+    "kcal_suministro_per_capita_2024"
+   ]
+  },
+  "frac_cadena_perecedera": {
+   "valor": 0.23,
+   "bajo": 0.18,
+   "alto": 0.3,
+   "unidad": "fraccion",
+   "descripcion": "Parte perecedera (en calorías) de ese inventario: frutas, verduras, lácteos y carne.",
+   "fuentes": [
+    "frac_pipeline_perecedero"
+   ]
+  },
+  "almacen_frio_mt": {
+   "valor": 25,
+   "bajo": 10,
+   "alto": 60,
+   "unidad": "Mt",
+   "descripcion": "Comida en almacenes fríos del mundo (EE. UU. guarda 3.94 Mt).",
+   "fuentes": [
+    "almacen_frio_global_mt",
+    "almacen_frio_eeuu_mt"
+   ]
+  },
+  "kcal_kg_congelados": {
+   "valor": 2100,
+   "bajo": 1800,
+   "alto": 2400,
+   "unidad": "kcal/kg",
+   "descripcion": "Energía promedio de lo congelado.",
+   "fuentes": [
+    "almacen_frio_eeuu_kcal_kg"
+   ]
+  },
+  "fruta_caida_kcal_anio1": {
+   "valor": 368000000000000.0,
+   "bajo": 115000000000000.0,
+   "alto": 829000000000000.0,
+   "unidad": "kcal/anio",
+   "descripcion": "Fruta y nueces caídas recuperables el primer año (incluye el fruto suelto de la palma aceitera; sin palma serían 1.83e14).",
+   "fuentes": [
+    "windfall_kcal_anio1",
+    "windfall_kcal_anio1_sin_palma",
+    "frac_fruta_que_cae",
+    "frac_recuperable_caida"
+   ]
+  },
+  "declive_huerto_anual": {
+   "valor": 0.12,
+   "bajo": 0.05,
+   "alto": 0.25,
+   "unidad": "fraccion/anio",
+   "descripcion": "Caída anual del rendimiento de los huertos sin poda, deshierbe ni control de plagas.",
+   "fuentes": [
+    "declive_huerto_anual"
+   ]
+  },
+  "piso_silvestre": {
+   "valor": 0.35,
+   "bajo": 0.15,
+   "alto": 0.6,
+   "unidad": "fraccion",
+   "descripcion": "Lo que sigue dando un árbol asilvestrado respecto al año 1.",
+   "fuentes": [
+    "rendimiento_feral_relativo"
+   ]
+  },
+  "frac_conservacion_fruta": {
+   "valor": 0.5,
+   "bajo": 0.0,
+   "alto": 0.8,
+   "unidad": "fraccion",
+   "descripcion": "Fracción de la fruta caída que la colmena seca, enlata o prensa en vez de comerla fresca.",
+   "fuentes": [
+    "receta_bebida"
+   ],
+   "derivacion": "Canon: procesan primero lo que se va a echar a perder y lo convierten en bebida estable."
+  },
+  "perros": {
+   "valor": 987000000.0,
+   "bajo": 700000000.0,
+   "alto": 1000000000.0,
+   "unidad": "cabezas",
+   "descripcion": "Perros en el mundo; más del 70% son de vida libre.",
+   "fuentes": [
+    "perros_mundo",
+    "frac_perros_libres"
+   ]
+  },
+  "gatos": {
+   "valor": 600000000.0,
+   "bajo": 480000000.0,
+   "alto": 1000000000.0,
+   "unidad": "cabezas",
+   "descripcion": "Gatos en el mundo.",
+   "fuentes": [
+    "gatos_mundo"
+   ]
+  },
+  "kcal_dia_perro": {
+   "valor": 1125,
+   "bajo": 630,
+   "alto": 1410,
+   "unidad": "kcal/dia",
+   "descripcion": "Requerimiento de un perro de 21.6 kg.",
+   "fuentes": [
+    "kcal_dia_perro"
+   ]
+  },
+  "kcal_dia_gato": {
+   "valor": 226,
+   "bajo": 190,
+   "alto": 300,
+   "unidad": "kcal/dia",
+   "descripcion": "Requerimiento de un gato.",
+   "fuentes": [
+    "kcal_dia_gato"
+   ]
+  },
+  "leche_kcal_anio": {
+   "valor": 631410000000000.0,
+   "bajo": 581452000000000.0,
+   "alto": 704132000000000.0,
+   "unidad": "kcal/anio",
+   "descripcion": "Energía de la producción mundial de leche (971 Mt × 650 kcal/kg).",
+   "fuentes": [
+    "leche_produccion_mt",
+    "kcal_kg_leche",
+    "regla_ordenio"
+   ]
+  },
+  "dias_lactancia": {
+   "valor": 305,
+   "bajo": 200,
+   "alto": 365,
+   "unidad": "dias",
+   "descripcion": "Duración de la lactancia: sin partos nuevos, la leche se acaba en unos 10 meses.",
+   "fuentes": [
+    "dias_lactancia_estandar",
+    "leche_requiere_partos"
+   ]
+  },
+  "huevo_kcal_anio": {
+   "valor": 126807000000000.0,
+   "bajo": 120934800000000.0,
+   "alto": 142985700000000.0,
+   "unidad": "kcal/anio",
+   "descripcion": "Energía de la producción mundial de huevo (98 Mt × 1,290 kcal/kg con cáscara).",
+   "fuentes": [
+    "huevo_produccion_mt",
+    "kcal_kg_huevo"
+   ]
+  },
+  "miel_kcal_anio": {
+   "valor": 5955360000000.0,
+   "bajo": 5829000000000.0,
+   "alto": 6540520000000.0,
+   "unidad": "kcal/anio",
+   "descripcion": "Energía de la producción mundial de miel.",
+   "fuentes": [
+    "miel_produccion_mt",
+    "kcal_kg_miel"
+   ]
+  },
+  "frac_recuperacion_cadaver_alimentado": {
+   "valor": 0.6,
+   "bajo": 0.4,
+   "alto": 0.8,
+   "unidad": "fraccion",
+   "descripcion": "Carne recuperada de animales que mueren en granja (se detectan en horas).",
+   "fuentes": [
+    "frac_recuperacion_cadaver",
+    "horas_ventana_cadaver"
+   ]
+  },
+  "frac_recuperacion_cadaver_liberado": {
+   "valor": 0.15,
+   "bajo": 0.05,
+   "alto": 0.3,
+   "unidad": "fraccion",
+   "descripcion": "Carne recuperada de animales liberados que mueren en el campo (carroñeros, calor, enfermedad).",
+   "fuentes": [
+    "frac_recuperacion_cadaver",
+    "descomposicion_estacional",
+    "canon_carronieros"
+   ]
   }
+ },
+ "tablas": {
+  "cereal_en_mano_mt_por_mes": {
+   "valores": [
+    2076,
+    1874,
+    1676,
+    1540,
+    1481,
+    1405,
+    1385,
+    1454,
+    1496,
+    1738,
+    2096,
+    2185
+   ],
+   "unidad": "Mt",
+   "descripcion": "Cereal físicamente almacenado en el mundo el día 1 de cada mes (enero a diciembre).",
+   "fuentes": [
+    "cereal_en_mano_mes_01",
+    "cereal_en_mano_mes_02",
+    "cereal_en_mano_mes_03",
+    "cereal_en_mano_mes_04",
+    "cereal_en_mano_mes_05",
+    "cereal_en_mano_mes_06",
+    "cereal_en_mano_mes_07",
+    "cereal_en_mano_mes_08",
+    "cereal_en_mano_mes_09",
+    "cereal_en_mano_mes_10",
+    "cereal_en_mano_mes_11",
+    "cereal_en_mano_mes_12"
+   ],
+   "derivacion": "Modelo propio: USDA PSD 2025/26 por país × calendario de cosecha AMIS, con consumo parejo y un factor de 0.85 calibrado con las existencias trimestrales de EE. UU. (NASS). El mínimo cae el 1 de julio y el máximo el 1 de diciembre."
+  },
+  "cosecha_cereal_frac_por_mes": {
+   "valores": [
+    0.005,
+    0.006,
+    0.031,
+    0.06,
+    0.053,
+    0.076,
+    0.11,
+    0.1,
+    0.177,
+    0.223,
+    0.118,
+    0.041
+   ],
+   "unidad": "fraccion",
+   "descripcion": "Fracción de la cosecha mundial de cereal levantada en cada mes.",
+   "fuentes": [
+    "cereal_frac_cosecha_mes_01",
+    "cereal_frac_cosecha_mes_02",
+    "cereal_frac_cosecha_mes_03",
+    "cereal_frac_cosecha_mes_04",
+    "cereal_frac_cosecha_mes_05",
+    "cereal_frac_cosecha_mes_06",
+    "cereal_frac_cosecha_mes_07",
+    "cereal_frac_cosecha_mes_08",
+    "cereal_frac_cosecha_mes_09",
+    "cereal_frac_cosecha_mes_10",
+    "cereal_frac_cosecha_mes_11",
+    "cereal_frac_cosecha_mes_12"
+   ]
+  },
+  "fruta_caida_frac_por_mes": {
+   "valores": [
+    0.0771,
+    0.075,
+    0.0658,
+    0.0658,
+    0.0658,
+    0.0817,
+    0.0863,
+    0.0955,
+    0.1047,
+    0.1047,
+    0.0955,
+    0.0821
+   ],
+   "unidad": "fraccion",
+   "descripcion": "Fracción de la fruta caída del año que cae en cada mes.",
+   "fuentes": [
+    "frac_windfall_tropical",
+    "frac_windfall_templado_norte",
+    "estacionalidad_bandas"
+   ],
+   "derivacion": "76% tropical (coco, palma, plátano: parejo todo el año) + 23% del norte templado (hueso jun-sep, manzana ago-nov, nueces ago-oct, aceituna oct-feb) + 1% del sur."
+  }
+ },
+ "ganado": {
+  "bovinos": {
+   "nombre": "Bovinos",
+   "cabezas": 1574000000.0,
+   "kcal_comestible_cabeza": 245000,
+   "vida_natural_dias": 6205,
+   "mortalidad_liberado_anual": 0.35,
+   "alimento_kcal_dia": 1490,
+   "frac_pastoreo": 0.0,
+   "fuentes": [
+    "bovinos_cabezas",
+    "peso_vivo_bovino_kg",
+    "kcal_kg_peso_vivo_bovino",
+    "vida_natural_bovino_anios",
+    "frac_rumiantes_sobreviven_pastoreo"
+   ]
+  },
+  "bufalos": {
+   "nombre": "Búfalos",
+   "cabezas": 212000000.0,
+   "kcal_comestible_cabeza": 293125,
+   "vida_natural_dias": 7300,
+   "mortalidad_liberado_anual": 0.3,
+   "alimento_kcal_dia": 500,
+   "frac_pastoreo": 0.0,
+   "fuentes": [
+    "bufalos_cabezas",
+    "peso_vivo_bufalo_kg"
+   ]
+  },
+  "cerdos": {
+   "nombre": "Cerdos",
+   "cabezas": 966000000.0,
+   "kcal_comestible_cabeza": 61480,
+   "vida_natural_dias": 4380,
+   "mortalidad_liberado_anual": 1.5,
+   "alimento_kcal_dia": 2980,
+   "frac_pastoreo": 0.0,
+   "fuentes": [
+    "cerdos_cabezas",
+    "peso_vivo_cerdo_kg",
+    "vida_natural_cerdo_anios",
+    "mortalidad_anual_cerda"
+   ]
+  },
+  "ovinos_caprinos": {
+   "nombre": "Ovejas y cabras",
+   "cabezas": 2519000000.0,
+   "kcal_comestible_cabeza": 28917.0,
+   "vida_natural_dias": 4745,
+   "mortalidad_liberado_anual": 0.3,
+   "alimento_kcal_dia": 150,
+   "frac_pastoreo": 0.0,
+   "fuentes": [
+    "ovejas_cabezas",
+    "cabras_cabezas",
+    "peso_vivo_oveja_kg",
+    "mortalidad_anual_ovino_caprino_adulto"
+   ]
+  },
+  "pollos_engorda": {
+   "nombre": "Pollos de engorda",
+   "cabezas": 8855000000.0,
+   "kcal_comestible_cabeza": 1561.5,
+   "vida_natural_dias": 120,
+   "mortalidad_liberado_anual": 20.0,
+   "alimento_kcal_dia": 300,
+   "frac_pastoreo": 0.0,
+   "fuentes": [
+    "pollos_engorda_cabezas",
+    "vida_natural_pollo_engorda_dias",
+    "broilers_no_sobreviven_libre_acceso"
+   ]
+  },
+  "gallinas_ponedoras": {
+   "nombre": "Gallinas ponedoras",
+   "cabezas": 8530000000.0,
+   "kcal_comestible_cabeza": 1873.8,
+   "vida_natural_dias": 2555,
+   "mortalidad_liberado_anual": 2.0,
+   "alimento_kcal_dia": 280,
+   "frac_pastoreo": 0.0,
+   "fuentes": [
+    "gallinas_ponedoras_cabezas",
+    "vida_natural_gallina_anios"
+   ]
+  },
+  "otras_aves": {
+   "nombre": "Otras aves (traspatio, patos, pavos, gansos)",
+   "cabezas": 11600000000.0,
+   "kcal_comestible_cabeza": 1571.91,
+   "vida_natural_dias": 2190,
+   "mortalidad_liberado_anual": 0.5,
+   "alimento_kcal_dia": 100,
+   "frac_pastoreo": 0.0,
+   "fuentes": [
+    "otros_pollos_cabezas",
+    "patos_cabezas",
+    "pavos_cabezas",
+    "gansos_cabezas"
+   ]
+  }
+ },
+ "nota_ganado": "kcal comestibles = peso vivo promedio del hato × kcal por kg vivo (canal × energía de la carne). Pienso = el grano que hoy consume cada especie (1,122 Mt de cereal al año repartidos según el pienso compuesto por sector), por cabeza.",
+ "pools": {
+  "perecederos": {
+   "nombre": "Frescos",
+   "vida_media_dias": 10
+  },
+  "tuberculos": {
+   "nombre": "Papa y tubérculos",
+   "vida_media_dias": 150
+  },
+  "aceites": {
+   "nombre": "Aceites vegetales",
+   "vida_media_dias": 1000
+  },
+  "conservas": {
+   "nombre": "Fruta seca o en conserva",
+   "vida_media_dias": 2500
+  },
+  "procesados": {
+   "nombre": "Comida empacada",
+   "vida_media_dias": 3000
+  },
+  "carne_animal": {
+   "nombre": "Carne de animales muertos",
+   "vida_media_dias": 2500
+  },
+  "hdp": {
+   "nombre": "HDP",
+   "vida_media_dias": 2500
+  },
+  "congelados": {
+   "nombre": "Congelados",
+   "vida_media_dias": 3650
+  },
+  "oleaginosas": {
+   "nombre": "Soya, oleaginosas y harinas",
+   "vida_media_dias": 6000
+  },
+  "cereal": {
+   "nombre": "Cereal",
+   "vida_media_dias": null
+  },
+  "legumbres": {
+   "nombre": "Legumbres",
+   "vida_media_dias": 10000
+  },
+  "azucar": {
+   "nombre": "Azúcar y miel",
+   "vida_media_dias": 50000
+  }
+ }
 }
