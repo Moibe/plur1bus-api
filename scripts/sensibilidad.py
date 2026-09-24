@@ -34,9 +34,11 @@ def main() -> None:
         p.add_argument(f"--{nombre}", dest=nombre, default=None)
     args = vars(p.parse_args())
     metrica, top = args.pop("metrica"), args.pop("top")
-    base = Escenario(**{k: v for k, v in args.items() if v is not None})
+    # El Escenario se arma en cada corrida: sus defaults (default_factory) leen
+    # supuestos.json, y si se construyera una sola vez congelaría los valores base.
+    overrides = {k: v for k, v in args.items() if v is not None}
 
-    ref = _metrica(base, metrica)
+    ref = _metrica(Escenario(**overrides), metrica)
     print(f"Métrica: {metrica} | base = {ref}\n")
 
     valores = S.cargar()["valores"]
@@ -49,7 +51,7 @@ def main() -> None:
         resultados = []
         for x in (bajo, alto):
             v["valor"] = x
-            resultados.append(_metrica(base, metrica))
+            resultados.append(_metrica(Escenario(**overrides), metrica))
         v["valor"] = original
         a, b = resultados
         if a is None or b is None or ref is None:

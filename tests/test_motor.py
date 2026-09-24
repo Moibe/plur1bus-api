@@ -114,3 +114,57 @@ def test_leche_sin_partos_se_acaba():
     resquicios = r.serie["entradas_kcal"]["resquicios"]
     assert resquicios[0] > 0
     assert resquicios[-1] == 0
+
+
+# --- Regresiones de la revisión adversarial del motor -------------------------------
+
+ABUNDANCIA = dict(cereal_en_mano_mt=5000, factor_otros_stocks=2, siembra_senescente=1, cosecha_senescente=1)
+
+
+def test_metricas_de_10_anios_no_dependen_del_horizonte():
+    corto = simular(Escenario(anios=1)).resumen
+    largo = simular(Escenario(anios=15)).resumen
+    assert corto["muertos_hambre_10_anios_frac"] == pytest.approx(largo["muertos_hambre_10_anios_frac"])
+    assert corto["koumba_acierta"] == largo["koumba_acierta"]
+    assert corto["poblacion_10_anios"] == pytest.approx(largo["poblacion_10_anios"])
+    assert corto["capacidad_de_carga"] == pytest.approx(largo["capacidad_de_carga"])
+    assert len(simular(Escenario(anios=1)).serie["dia"]) == 53
+
+
+def test_racion_reportada_es_contra_el_requerimiento_base():
+    r = _r(racion_modo="fija", racion_fraccion=0.5, anios=3, **ABUNDANCIA)
+    assert r.resumen["racion_promedio"] == pytest.approx(0.5, abs=0.02)
+
+
+def test_animales_alimentados_no_mueren_de_hambre_si_sobra_comida():
+    fija = _r(racion_modo="fija", racion_fraccion=0.8, ganado_politica="alimentar", anios=2, **ABUNDANCIA)
+    completa = _r(racion_modo="completa", ganado_politica="alimentar", anios=2, **ABUNDANCIA)
+    bov_fija = fija.serie["ganado_cabezas"]["bovinos"][-1]
+    bov_completa = completa.serie["ganado_cabezas"]["bovinos"][-1]
+    assert bov_fija == pytest.approx(bov_completa, rel=0.01)
+
+
+def test_desnutricion_cronica_mata_con_raciones_muy_bajas():
+    muy_baja = _r(racion_modo="fija", racion_fraccion=0.36, anios=4, **ABUNDANCIA).resumen
+    suficiente = _r(racion_modo="fija", racion_fraccion=0.8, anios=4, **ABUNDANCIA).resumen
+    assert muy_baja["muertes_hambre"] > 0.3 * muy_baja["poblacion_inicial"]
+    assert suficiente["muertes_hambre"] < 0.01 * suficiente["poblacion_inicial"]
+
+
+def test_estirar_no_se_come_la_cosecha_pasajera_como_si_durara():
+    r = _r(racion_modo="estirar", horizonte_estirar_anios=10, racion_minima=0.3, cosecha_senescente=1, anios=2)
+    # el primer año no debería comer a ración completa gracias a una cosecha que dura 5 meses
+    assert r.resumen["racion_promedio"] < 0.9
+
+
+def test_ultima_semana_parcial_se_reporta():
+    r = _r(anios=1)
+    assert r.serie["dias_tramo"][-1] == 365 - 7 * 52
+    assert sum(r.serie["dias_tramo"]) == 365
+
+
+def test_api_rechaza_nan_con_422():
+    c = TestClient(app)
+    r = c.post("/simular", content='{"kcal_dia_promedio": NaN}', headers={"Content-Type": "application/json"})
+    assert r.status_code == 422
+    assert c.post("/simular", json={"natalidad": 2.3, "anios": 1}).status_code == 200

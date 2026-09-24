@@ -5,11 +5,15 @@ Arranca con:        uvicorn main:app --reload --port 8004
 Docs interactivas:  http://127.0.0.1:8004/docs
 """
 
+import math
 import os
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from motor import supuestos
 from motor.escenario import Escenario, palancas
@@ -34,6 +38,23 @@ app.add_middleware(
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type"],
 )
+
+
+def _sin_no_finitos(x):
+    """NaN/Infinity no son JSON válido: se devuelven como texto dentro del error."""
+    if isinstance(x, float) and not math.isfinite(x):
+        return str(x)
+    if isinstance(x, dict):
+        return {k: _sin_no_finitos(v) for k, v in x.items()}
+    if isinstance(x, (list, tuple)):
+        return [_sin_no_finitos(v) for v in x]
+    return x
+
+
+@app.exception_handler(RequestValidationError)
+async def error_de_validacion(_: Request, exc: RequestValidationError):
+    # El handler por defecto truena (500) al serializar un NaN que venía en el body.
+    return JSONResponse(status_code=422, content={"detail": _sin_no_finitos(jsonable_encoder(exc.errors()))})
 
 
 @app.get("/health")

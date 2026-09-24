@@ -7,7 +7,7 @@ rangos ni textos. Los defaults salen de datos/supuestos.json.
 
 from typing import Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from . import supuestos as S
 
@@ -26,6 +26,9 @@ def _s(clave: str) -> float:
 
 
 class Escenario(BaseModel):
+    # NaN e infinito no son escenarios: se rechazan con 422 en lugar de romper la simulación.
+    model_config = ConfigDict(allow_inf_nan=False)
+
     # --- General ---------------------------------------------------------------
     mes_union: int = Field(
         7, ge=1, le=12,
@@ -50,8 +53,8 @@ class Escenario(BaseModel):
         json_schema_extra=_p("Demanda", "Adaptación metabólica", 0.05, "pct"),
     )
     natalidad: float = Field(
-        1.0, ge=0, le=2,
-        description="Multiplicador sobre la natalidad del canon (965 nacimientos cada 10 minutos, ep. 8) después de los embarazos que ya estaban en curso (primeros 9 meses). 2.3 regresa a la natalidad de antes de la Unión.",
+        1.0, ge=0, le=2.5,
+        description="Multiplicador sobre la natalidad del canon (965 nacimientos cada 10 minutos, ep. 8) después de los embarazos que ya estaban en curso (primeros 9 meses). 2.35 regresa a la natalidad de antes de la Unión (16.1 por mil).",
         json_schema_extra=_p("Demanda", "Natalidad (x canon)", 0.05, "x"),
     )
     muertes_naturales_dia: float = Field(

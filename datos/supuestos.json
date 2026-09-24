@@ -183,6 +183,31 @@
    "fuentes": [],
    "derivacion": "Supuesto del modelo."
   },
+  "umbral_desnutricion": {
+   "valor": 0.3,
+   "bajo": 0.2,
+   "alto": 0.5,
+   "unidad": "fraccion",
+   "descripcion": "Reserva (fracción de la inicial) por debajo de la cual empieza el riesgo de morir por desnutrición, más o menos la delgadez severa (IMC < 16).",
+   "fuentes": [
+    "imc_desnutricion_severa",
+    "imc_letal",
+    "frac_perdida_peso_letal"
+   ],
+   "derivacion": "Con 30% de la reserva, un adulto ya perdió ~28% de su peso: cerca del IMC 16 de la OMS."
+  },
+  "riesgo_desnutricion_max": {
+   "valor": 0.01,
+   "bajo": 0.003,
+   "alto": 0.03,
+   "unidad": "fraccion/dia",
+   "descripcion": "Riesgo diario de morir cuando la reserva se acerca a cero (infecciones, falla orgánica). Crece con el cuadrado de lo que falta por debajo del umbral.",
+   "fuentes": [
+    "sitio_leningrado",
+    "minnesota_semiinanicion"
+   ],
+   "derivacion": "Supuesto calibrado: con 1% al día, una población con 15% de la ración (Leningrado) muere en masa en 2-3 meses, y con ~45% (Minnesota) la mortalidad a 24 semanas queda en pocos por ciento."
+  },
   "frac_muertes_ninos": {
    "valor": 0.097,
    "bajo": 0.09,
@@ -637,11 +662,34 @@
    "bajo": 200,
    "alto": 365,
    "unidad": "dias",
-   "descripcion": "Duración de la lactancia: sin partos nuevos, la leche se acaba en unos 10 meses.",
+   "descripcion": "Duración de la lactancia.",
    "fuentes": [
     "dias_lactancia_estandar",
     "leche_requiere_partos"
    ]
+  },
+  "dias_gestacion_vaca": {
+   "valor": 283,
+   "bajo": 279,
+   "alto": 290,
+   "unidad": "dias",
+   "descripcion": "Gestación de una vaca: las que ya estaban preñadas paren en los meses siguientes aunque no haya partos nuevos.",
+   "fuentes": [
+    "leche_requiere_partos"
+   ],
+   "derivacion": "Dato zootécnico estándar (~9.3 meses)."
+  },
+  "frac_vacas_prenadas": {
+   "valor": 0.55,
+   "bajo": 0.5,
+   "alto": 0.75,
+   "unidad": "fraccion",
+   "descripcion": "Fracción de las vacas lecheras preñadas el día de la Unión. Sin partos nuevos, la leche dura ~19 meses en lugar de ~10.",
+   "fuentes": [
+    "leche_requiere_partos",
+    "dias_lactancia_estandar"
+   ],
+   "derivacion": "Con un parto cada 12-13 meses y 305 días de lactancia, algo más de la mitad del hato está gestando en un día cualquiera."
   },
   "huevo_kcal_anio": {
    "valor": 126807000000000.0,
