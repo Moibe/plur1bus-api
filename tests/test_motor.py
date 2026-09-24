@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from fastapi.testclient import TestClient  # noqa: E402
 
 from main import app  # noqa: E402
-from motor.escenario import Escenario  # noqa: E402
+from motor.escenario import Escenario, palancas  # noqa: E402
 from motor.simulacion import simular  # noqa: E402
 
 
@@ -171,3 +171,14 @@ def test_api_rechaza_nan_con_422():
     r = c.post("/simular", content='{"kcal_dia_promedio": NaN}', headers={"Content-Type": "application/json"})
     assert r.status_code == 422
     assert c.post("/simular", json={"natalidad": 2.3, "anios": 1}).status_code == 200
+
+
+def test_defaults_caen_en_el_paso_de_su_slider():
+    # Si un default no cae en min + k*paso, el slider del front lo "corrige" al montarse
+    # y la simulación corre con otro valor (pasó con la pérdida de grano: 4.5% -> 4%).
+    for clave, p in palancas()["properties"].items():
+        paso, d = p.get("paso"), p.get("default")
+        if not paso or isinstance(d, bool) or not isinstance(d, (int, float)):
+            continue
+        pasos = (d - p.get("minimum", 0)) / paso
+        assert abs(pasos - round(pasos)) < 1e-6, f"{clave}={d} no cae en pasos de {paso}"

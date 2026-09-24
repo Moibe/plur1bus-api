@@ -72,7 +72,7 @@ class Escenario(BaseModel):
     racion_fraccion: float = Field(
         0.8, ge=0.3, le=1,
         description="Ración como fracción del requerimiento (modo fija).",
-        json_schema_extra=_p("Reparto", "Ración fija", 0.05, "pct"),
+        json_schema_extra=_p("Reparto", "Ración fija", 0.01, "pct"),
     )
     horizonte_estirar_anios: float = Field(
         10, ge=1, le=30,
@@ -94,7 +94,7 @@ class Escenario(BaseModel):
     perdida_cereal_anual: float = Field(
         default_factory=lambda: _s("perdida_cereal_anual"), ge=0, le=0.3,
         description="Pérdida anual del grano almacenado.",
-        json_schema_extra=_p("Existencias", "Pérdida anual de grano", 0.01, "pct"),
+        json_schema_extra=_p("Existencias", "Pérdida anual de grano", 0.005, "pct"),
     )
     factor_otros_stocks: float = Field(
         1.0, ge=0, le=2,
