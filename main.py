@@ -20,16 +20,16 @@ load_dotenv()
 app = FastAPI(title="Plur1bus: supervivencia de la colmena", version="0.0.1")
 
 # --- CORS ---------------------------------------------------------------------
-# El front (SvelteKit) pega directo desde el navegador. localhost y 127.0.0.1
-# son orígenes distintos para el browser; 4400 es el puerto reservado del front.
-_default_origins = ",".join(
-    f"http://{host}:{port}" for host in ("localhost", "127.0.0.1") for port in (5173, 4400)
-)
-origins = [o.strip() for o in os.getenv("CORS_ORIGINS", _default_origins).split(",") if o.strip()]
+# El front (SvelteKit) pega directo desde el navegador. Sin CORS_ORIGINS se
+# acepta cualquier puerto de localhost/127.0.0.1: Vite sube de puerto solo si
+# 5173 está ocupado, y así no se rompe en silencio. En un servidor se fija la
+# lista: CORS_ORIGINS="https://mi-front.com".
+origins = [o.strip() for o in os.getenv("CORS_ORIGINS", "").split(",") if o.strip()]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_origin_regex=None if origins else r"http://(localhost|127\.0\.0\.1)(:\d+)?",
     allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type"],
