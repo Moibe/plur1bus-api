@@ -15,7 +15,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from motor import supuestos
+from motor import i18n, supuestos
 from motor.escenario import Escenario, palancas
 from motor.simulacion import simular
 
@@ -62,22 +62,28 @@ def health():
     return {"ok": True}
 
 
+# Todos los endpoints con texto aceptan ?lang=es|en|pt|fr|de|ar (español si no viene
+# o no se conoce). Los números no cambian: solo etiquetas, explicaciones y nombres.
+
+
 @app.get("/escenario")
-def escenario():
+def escenario(lang: str = "es"):
     """Palancas del escenario con rangos, textos y defaults, para armar los controles."""
-    return palancas()
+    return i18n.traducir_palancas(palancas(), i18n.normalizar(lang))
 
 
 @app.post("/simular")
-def post_simular(e: Escenario):
+def post_simular(e: Escenario, lang: str = "es"):
+    lang = i18n.normalizar(lang)
     r = simular(e)
-    return {"escenario": e.model_dump(), "resumen": r.resumen, "fuentes": r.fuentes, "serie": r.serie}
+    fuentes = [{**f, "nombre": i18n.nombre_pool(f["clave"], f["nombre"], lang)} for f in r.fuentes]
+    return {"escenario": e.model_dump(), "resumen": r.resumen, "fuentes": fuentes, "serie": r.serie}
 
 
 @app.get("/supuestos")
-def get_supuestos():
+def get_supuestos(lang: str = "es"):
     """Valores base del modelo, cada uno con rango, unidad y las fuentes que lo respaldan."""
-    base = supuestos.cargar()
+    base = i18n.traducir_supuestos(supuestos.cargar(), i18n.normalizar(lang))
     por_id = {p["id"]: p for p in supuestos.fuentes().get("params", [])}
     valores = {
         clave: {**v, "fuentes_detalle": [por_id[f] for f in v.get("fuentes", []) if f in por_id]}
@@ -87,6 +93,7 @@ def get_supuestos():
 
 
 @app.get("/fuentes")
-def get_fuentes():
+def get_fuentes(lang: str = "es"):
     """El set completo investigado y verificado: parámetros, hechos del canon y huecos."""
-    return supuestos.fuentes()
+    fuentes = supuestos.fuentes()
+    return {**fuentes, "facts": i18n.traducir_hechos(fuentes.get("facts", []), i18n.normalizar(lang))}

@@ -18,6 +18,8 @@ El front vive en el repo hermano [`plur1bus`](https://github.com/Moibe/plur1bus)
 | [motor/supuestos.py](motor/supuestos.py) | Lee los supuestos base |
 | [datos/supuestos.json](datos/supuestos.json) | Capa curada: cada valor con rango, unidad, fuentes y derivación |
 | [datos/fuentes.json](datos/fuentes.json) | Set investigado y verificado: parámetros con cita, hechos del canon y huecos |
+| [motor/i18n.py](motor/i18n.py) | Traduce los textos de las respuestas al idioma de `?lang=` |
+| [datos/i18n/](datos/i18n/) | Un archivo por idioma; `es.json` es la fuente y se genera con `herramientas/extraer_textos.py` |
 | [scripts/](scripts/) | Scripts de terminal: simular un escenario, análisis de sensibilidad |
 | [main.py](main.py) | FastAPI |
 
@@ -55,7 +57,31 @@ uvicorn main:app --reload --port 8004
 | `GET /supuestos` | Supuestos base con sus fuentes |
 | `GET /fuentes` | El set investigado completo |
 
+Todos los endpoints con texto aceptan `?lang=es|en|pt|fr|de|ar` (también `en-US`, etc.). Sin `lang`, o
+con uno que no existe, responden en español. Solo se traducen textos: los números son idénticos en
+todos los idiomas.
+
 Docs interactivas en http://127.0.0.1:8004/docs.
+
+## Idiomas
+
+El español es el idioma fuente. Los textos originales viven donde siempre (`escenario.py`,
+`supuestos.json`, los hechos del canon en `fuentes.json`) y `herramientas/extraer_textos.py` los junta en
+`datos/i18n/es.json`, una clave por texto. Cada idioma es un archivo con las mismas claves; si a uno le
+falta una clave, se usa el español.
+
+Después de cambiar o agregar un texto:
+
+```bash
+python herramientas/extraer_textos.py              # regenera datos/i18n/es.json
+# traduce las claves nuevas en datos/i18n/<idioma>.json
+node ../plur1bus/scripts/validar-traducciones.mjs  # valida API y front contra el español
+pytest -q tests/test_i18n.py
+```
+
+`test_i18n.py` falla si `es.json` quedó desfasado del código o si a un idioma le falta o le sobra una
+clave. Los diccionarios se leen una vez por proceso: reinicia uvicorn tras editarlos (`--reload` solo vigila
+los `.py`, salvo que le agregues `--reload-include '*.json'`).
 
 ## Pruebas
 
